@@ -11,10 +11,8 @@ const SEASON_STYLE = {
 /* ============================================================
    FILTER STATE
    ============================================================ */
-let selectedFields  = new Set();
-let selectedLangs   = new Set();
-let selectedSimReal = new Set();
-let selectedSeasons = new Set();
+let selectedSeasons     = new Set();
+let requiredIngredients = new Set(); // ingredient name strings, lowercase
 let allRecipes = [];
 
 function normalizeTag(tag) {
@@ -30,18 +28,22 @@ function normalizeSet(tagSet) {
    ============================================================ */
 function renderCards(recipes) {
   const grid = document.getElementById('recipesGrid');
-
-  const normFields  = normalizeSet(selectedFields);
-  const normLangs   = normalizeSet(selectedLangs);
-  const normSimReal = normalizeSet(selectedSimReal);
   const normSeasons = normalizeSet(selectedSeasons);
 
   const filtered = recipes
     .filter(r => {
-      if (normFields.length  && !normFields.some(f  => r.field.map(x => normalizeTag(x)).includes(f)))  return false;
-      if (normLangs.length   && !normLangs.some(l   => r.lang.map(x  => normalizeTag(x)).includes(l)))  return false;
-      if (normSimReal.length && !normSimReal.some(s  => r.simreal.map(x => normalizeTag(x)).includes(s))) return false;
+      // Season filter
       if (normSeasons.length && !normSeasons.includes(normalizeTag(r.season))) return false;
+
+      // Ingredient filter — recipe must contain ALL required ingredients
+      if (requiredIngredients.size > 0) {
+        const recipeIngNames = (r.ingredients || []).map(i => i.name.toLowerCase());
+        for (const req of requiredIngredients) {
+          // partial match: "tom" matches "tomatoes"
+          if (!recipeIngNames.some(name => name.includes(req))) return false;
+        }
+      }
+
       return true;
     })
     .sort((a, b) => b.score - a.score);
@@ -66,9 +68,6 @@ function renderCards(recipes) {
     return `
       <div class="recipe-card"
            data-recipe="${r.id}"
-           data-field="${(r.field || []).join(',')}"
-           data-lang="${(r.lang || []).join(',')}"
-           data-simreal="${(r.simreal || []).join(',')}"
            data-season="${r.season}"
            style="background-color:${season.bg}">
         <div class="card-top">
@@ -89,18 +88,72 @@ function renderCards(recipes) {
 }
 
 /* ============================================================
+   INGREDIENT SEARCH
+   ============================================================ */
+function renderIngredientTags() {
+  const container = document.getElementById('ingredientTags');
+  container.innerHTML = [...requiredIngredients].map(ing => `
+    <span class="ingredient-tag">
+      ${ing}
+      <button class="ingredient-tag-remove" data-ing="${ing}" title="Remove">✕</button>
+    </span>
+  `).join('');
+
+  container.querySelectorAll('.ingredient-tag-remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      requiredIngredients.delete(btn.dataset.ing);
+      renderIngredientTags();
+      renderCards(allRecipes);
+    });
+  });
+}
+
+function addIngredient(value) {
+  const trimmed = value.trim().toLowerCase();
+  if (!trimmed) return;
+  requiredIngredients.add(trimmed);
+  renderIngredientTags();
+  renderCards(allRecipes);
+}
+
+function setupIngredientSearch() {
+  const input  = document.getElementById('ingredientInput');
+  const addBtn = document.getElementById('ingredientAddBtn');
+
+  addBtn.addEventListener('click', () => {
+    addIngredient(input.value);
+    input.value = '';
+    input.focus();
+  });
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      addIngredient(input.value);
+      input.value = '';
+    }
+    // Backspace on empty input removes last tag
+    if (e.key === 'Backspace' && input.value === '' && requiredIngredients.size > 0) {
+      const last = [...requiredIngredients].at(-1);
+      requiredIngredients.delete(last);
+      renderIngredientTags();
+      renderCards(allRecipes);
+    }
+  });
+}
+
+/* ============================================================
    MODAL
    ============================================================ */
 function formatQuantity(qty) {
   if (Number.isInteger(qty)) return String(qty);
-  // Round to 2 decimal places and strip trailing zeros
   return parseFloat(qty.toFixed(2)).toString();
 }
 
 function renderIngredients(ingredients, servings, baseServings) {
   return ingredients.map(i => {
     const scaled = (i.quantity * servings) / baseServings;
-    return `<li data-base="${i.quantity}" data-unit="${i.unit}" data-name="${i.name}">
+    return `<li>
       <span class="ing-qty">${formatQuantity(scaled)}</span>
       <span class="ing-unit">${i.unit}</span>
       <span class="ing-name">${i.name}</span>
@@ -179,7 +232,6 @@ function attachCardListeners() {
       const closeBtn = modal.querySelector('.close-btn');
       if (closeBtn) closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
 
-      // Servings controls
       const baseServings = recipe.number_servings || 1;
       const countEl = modal.querySelector('#servings-count');
       const listEl  = modal.querySelector('#ingredients-list');
@@ -215,7 +267,7 @@ window.closeModal = function () {
 };
 
 /* ============================================================
-   FILTER TAGS
+   SEASON FILTER
    ============================================================ */
 function setupFilterGroup(groupId, tagSet, recipes) {
   document.querySelectorAll(`#${groupId} .filter-tag`).forEach(tag => {
@@ -269,9 +321,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   renderCards(allRecipes);
-
-  setupFilterGroup('fieldFilter',   selectedFields,  allRecipes);
-  setupFilterGroup('langFilter',    selectedLangs,   allRecipes);
-  setupFilterGroup('SimRealFilter', selectedSimReal, allRecipes);
-  setupFilterGroup('seasonFilter',  selectedSeasons, allRecipes);
+  setupFilterGroup('seasonFilter', selectedSeasons, allRecipes);
+  setupIngredientSearch();
 });

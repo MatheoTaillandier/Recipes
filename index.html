@@ -8,14 +8,9 @@
 </head>
 <body>
 
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="nav-left">Recipes</div>
-  </nav>
-
-  <!-- Hero Section -->
   <header class="hero">
     <div class="hero-content">
+      <h1>Recipes</h1>
       <div class="filters">
 
         <div class="filter-row">
@@ -27,18 +22,30 @@
           </div>
         </div>
 
+        <div class="filter-row ingredient-search-row">
+          <div class="ingredient-search-wrapper">
+            <input
+              type="text"
+              id="ingredientInput"
+              class="ingredient-input"
+              placeholder="Add an ingredient…"
+              autocomplete="off"
+            />
+            <button id="ingredientAddBtn" class="ingredient-add-btn">+</button>
+          </div>
+          <div id="ingredientTags" class="ingredient-tags"></div>
+        </div>
+
       </div>
     </div>
   </header>
 
-  <!-- Projects Section -->
   <section id="recipes" class="recipes-section">
     <div class="recipes-grid" id="recipesGrid">
       <!-- Cards injected by JS -->
     </div>
   </section>
 
-  <!-- Footer -->
   <footer>
     <p>© 2026 Mathéo Taillandier</p>
   </footer>

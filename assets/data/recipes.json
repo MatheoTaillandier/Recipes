@@ -1,26 +1,50 @@
 [
-  {
-    "id": "tomato-recipe",
-    "title": "Tomato recipe",
-    "desc": "A simple recipe for a delicious tomato dish.",
-    "image": "assets/images/tomato-recipe.jpg",
-    "season": "summer",
-    "score": 3,
-    "number_servings": 4,
-    "ingredients": [
-      {"name" : "Tomatoes", "quantity": 4, "unit": "pcs"},
-      {"name" : "Olive oil", "quantity": 2, "unit": "tbsp"},
-      {"name" : "Garlic", "quantity": 2, "unit": "cloves"},
-      {"name" : "Salt", "quantity": 1, "unit": "tsp"},
-      {"name" : "Pepper", "quantity": 0.5, "unit": "tsp"},
-      {"name" : "Fresh basil", "quantity": 0.25, "unit": "cup"}
-    ],
-    "steps": [
-      "Preheat the oven to 400°F (200°C).",
-      "Cut the tomatoes in half and place them on a baking sheet.",
-      "Drizzle olive oil over the tomatoes and sprinkle with minced garlic, salt, and pepper.",
-      "Roast the tomatoes in the oven for 20-25 minutes until they are tender and slightly caramelized.",
-      "Remove from the oven and sprinkle with chopped basil before serving."
-    ]
-  }
+    {
+        "id": "tomato-recipe",
+        "title": "Tomato recipe",
+        "desc": "A simple recipe for a delicious tomato dish.",
+        "image": "assets/images/tomato-recipe.jpg",
+        "season": "summer",
+        "score": 3,
+        "number_servings": 4,
+        "ingredients": [
+        {"name" : "Tomatoes", "quantity": 4, "unit": "pcs"},
+        {"name" : "Olive oil", "quantity": 2, "unit": "tbsp"},
+        {"name" : "Garlic", "quantity": 2, "unit": "cloves"},
+        {"name" : "Salt", "quantity": 1, "unit": "tsp"},
+        {"name" : "Pepper", "quantity": 0.5, "unit": "tsp"},
+        {"name" : "Fresh basil", "quantity": 0.25, "unit": "cup"}
+        ],
+        "steps": [
+        "Preheat the oven to 400°F (200°C).",
+        "Cut the tomatoes in half and place them on a baking sheet.",
+        "Drizzle olive oil over the tomatoes and sprinkle with minced garlic, salt, and pepper.",
+        "Roast the tomatoes in the oven for 20-25 minutes until they are tender and slightly caramelized.",
+        "Remove from the oven and sprinkle with chopped basil before serving."
+        ]
+    },
+    {   
+        "id": "carot-recipe",
+        "title": "Carrot recipe",
+        "desc": "A simple recipe for a delicious carrot dish.",
+        "image": "assets/images/carot-recipe.jpg",
+        "season": "winter",
+        "score": 3,
+        "number_servings": 4,
+        "ingredients": [
+        {"name" : "Carrots", "quantity": 4, "unit": "pcs"},
+        {"name" : "Olive oil", "quantity": 2, "unit": "tbsp"},
+        {"name" : "Garlic", "quantity": 2, "unit": "cloves"},
+        {"name" : "Salt", "quantity": 1, "unit": "tsp"},
+        {"name" : "Pepper", "quantity": 0.5, "unit": "tsp"},
+        {"name" : "Fresh basil", "quantity": 0.25, "unit": "cup"}
+        ],
+        "steps": [
+        "Preheat the oven to 400°F (200°C).",
+        "Cut the carrots in half and place them on a baking sheet.",
+        "Drizzle olive oil over the carrots and sprinkle with minced garlic, salt, and pepper.",
+        "Roast the carrots in the oven for 20-25 minutes until they are tender and slightly caramelized.",
+        "Remove from the oven and sprinkle with chopped basil before serving."
+        ]
+    }
 ]
