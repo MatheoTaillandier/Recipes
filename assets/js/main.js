@@ -1,152 +1,277 @@
-document.querySelectorAll('.nav-right a').forEach(link => {
-  link.addEventListener('click', function (e) {
-    const href = this.getAttribute('href');
+/* ============================================================
+   SEASON CONFIG
+   ============================================================ */
+const SEASON_STYLE = {
+  spring: { bg: '#acffbf', color: '#2d6a4f', label: 'Spring' },
+  summer: { bg: '#ffeba9', color: '#856404', label: 'Summer' },
+  autumn: { bg: '#ffbf8f', color: '#8b3a1a', label: 'Autumn' },
+  winter: { bg: '#abdcff', color: '#154360', label: 'Winter' },
+};
 
-    // Check if href starts with '#', indicating an internal anchor
-    if (href && href.startsWith('#')) {
-      e.preventDefault();
-      const target = document.querySelector(href);
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-    // else, for external links or different pages, do nothing -> allow normal navigation
-  });
-});
-
-let lastIsMobile = window.innerWidth <= 1000;
-
-window.addEventListener("resize", () => {
-  const isMobile = window.innerWidth <= 1000;
-
-  if (isMobile !== lastIsMobile) {
-    location.reload();
-  }
-
-  lastIsMobile = isMobile;
-});
-
-
-const fieldTags = document.querySelectorAll('#fieldFilter .filter-tag');
-const langTags = document.querySelectorAll('#langFilter .filter-tag');
-const simRealTags = document.querySelectorAll('#SimRealFilter .filter-tag');
-const recipeCards = document.querySelectorAll('.recipe-card');
-
-let selectedFields = new Set();
-let selectedLangs = new Set();
+/* ============================================================
+   FILTER STATE
+   ============================================================ */
+let selectedFields  = new Set();
+let selectedLangs   = new Set();
 let selectedSimReal = new Set();
+let selectedSeasons = new Set();
+let allRecipes = [];
 
 function normalizeTag(tag) {
   return tag.replace(/\s+/g, '').toLowerCase();
 }
 
-function normalizeSelectedTags(tagSet) {
-  return [...tagSet].map(tag => tag.replace(/\s+/g, '').toLowerCase());
+function normalizeSet(tagSet) {
+  return [...tagSet].map(t => t.replace(/\s+/g, '').toLowerCase());
 }
 
-function updateTagSet(tagSet, tagText, isActive) {
-  if (isActive) tagSet.add(tagText);
-  else tagSet.delete(tagText);
+/* ============================================================
+   RENDER CARDS
+   ============================================================ */
+function renderCards(recipes) {
+  const grid = document.getElementById('recipesGrid');
+
+  const normFields  = normalizeSet(selectedFields);
+  const normLangs   = normalizeSet(selectedLangs);
+  const normSimReal = normalizeSet(selectedSimReal);
+  const normSeasons = normalizeSet(selectedSeasons);
+
+  const filtered = recipes
+    .filter(r => {
+      if (normFields.length  && !normFields.some(f  => r.field.map(x => normalizeTag(x)).includes(f)))  return false;
+      if (normLangs.length   && !normLangs.some(l   => r.lang.map(x  => normalizeTag(x)).includes(l)))  return false;
+      if (normSimReal.length && !normSimReal.some(s  => r.simreal.map(x => normalizeTag(x)).includes(s))) return false;
+      if (normSeasons.length && !normSeasons.includes(normalizeTag(r.season))) return false;
+      return true;
+    })
+    .sort((a, b) => b.score - a.score);
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<p class="no-results">No recipes match the selected filters.</p>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(r => {
+    const season = SEASON_STYLE[r.season];
+    const allTags = [...(r.field || []), ...(r.lang || []), ...(r.simreal || [])];
+
+    const imageBlock = r.image
+      ? `<img src="${r.image}" alt="${r.title}" class="recipe-image" />`
+      : `<div class="recipe-season-block" style="background:${season.bg}">
+           <span class="season-label" style="color:${season.color}">${season.label}</span>
+         </div>`;
+
+    const stars = '★'.repeat(r.score) + '☆'.repeat(5 - r.score);
+
+    return `
+      <div class="recipe-card"
+           data-recipe="${r.id}"
+           data-field="${(r.field || []).join(',')}"
+           data-lang="${(r.lang || []).join(',')}"
+           data-simreal="${(r.simreal || []).join(',')}"
+           data-season="${r.season}"
+           style="background-color:${season.bg}">
+        <div class="card-top">
+          ${imageBlock}
+          <h3>${r.title}</h3>
+          <p>${r.desc}</p>
+        </div>
+        <div class="card-bottom">
+          <div class="tags">
+            ${allTags.map(t => `<span class="tag">${t}</span>`).join('')}
+          </div>
+          <div class="card-score" title="Score: ${r.score}/5">${stars}</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  attachCardListeners();
 }
 
-function filterRecipes() {
-  const normalizedSelectedFields = normalizeSelectedTags(selectedFields);
-  const normalizedSelectedLangs = normalizeSelectedTags(selectedLangs);
-  const normalizedSelectedSimReal = normalizeSelectedTags(selectedSimReal);
-
-  recipeCards.forEach(card => {
-    const cardField = card.dataset.field
-      .split(',')
-      .map(f => normalizeTag(f));
-    const cardLangs = card.dataset.lang
-      .split(',')
-      .map(l => normalizeTag(l));
-    const cardSimReal = card.dataset.simreal
-      .split(',')
-      .map(s => normalizeTag(s));
-
-    const matchField = normalizedSelectedFields.length === 0 || normalizedSelectedFields.some(field => cardField.includes(field));
-    const matchLang = normalizedSelectedLangs.length === 0 || normalizedSelectedLangs.some(lang => cardLangs.includes(lang));
-    const matchSimReal = normalizedSelectedSimReal.length === 0 || normalizedSelectedSimReal.some(simReal => cardSimReal.includes(simReal));
-
-    card.style.display = (matchField && matchLang && matchSimReal) ? 'flex' : 'none';
-  });
+/* ============================================================
+   MODAL
+   ============================================================ */
+function formatQuantity(qty) {
+  if (Number.isInteger(qty)) return String(qty);
+  // Round to 2 decimal places and strip trailing zeros
+  return parseFloat(qty.toFixed(2)).toString();
 }
 
-function handleTagClick(tagElement, group, tagSet) {
-  const tagText = tagElement.dataset.tag;
-  const isActive = tagElement.classList.toggle('active');
-  updateTagSet(tagSet, tagText, isActive);
-  filterRecipes();
+function renderIngredients(ingredients, servings, baseServings) {
+  return ingredients.map(i => {
+    const scaled = (i.quantity * servings) / baseServings;
+    return `<li data-base="${i.quantity}" data-unit="${i.unit}" data-name="${i.name}">
+      <span class="ing-qty">${formatQuantity(scaled)}</span>
+      <span class="ing-unit">${i.unit}</span>
+      <span class="ing-name">${i.name}</span>
+    </li>`;
+  }).join('');
 }
 
-fieldTags.forEach(tag => {
-  tag.addEventListener('click', () => handleTagClick(tag, fieldTags, selectedFields));
-});
+function buildModalHtml(r) {
+  const season = SEASON_STYLE[r.season];
+  const allTags = [...(r.field || []), ...(r.lang || []), ...(r.simreal || [])];
+  const baseServings = r.number_servings || 1;
 
-langTags.forEach(tag => {
-  tag.addEventListener('click', () => handleTagClick(tag, langTags, selectedLangs));
-});
+  const imageHtml = r.image
+    ? `<div class="modal-image"><img src="${r.image}" alt="${r.title}" /></div>`
+    : '';
 
-simRealTags.forEach(tag => {
-  tag.addEventListener('click', () => handleTagClick(tag, simRealTags, selectedSimReal));
-});
+  const ingredientsHtml = r.ingredients && r.ingredients.length
+    ? `<div class="modal-section">
+        <div class="section-header">
+          <h3 class="section-title">Ingredients</h3>
+          <div class="servings-control">
+            <button class="servings-btn" id="servings-down">−</button>
+            <span class="servings-display">
+              <span id="servings-count">${baseServings}</span> servings
+            </span>
+            <button class="servings-btn" id="servings-up">+</button>
+          </div>
+        </div>
+        <ul class="ingredients-list" id="ingredients-list">
+          ${renderIngredients(r.ingredients, baseServings, baseServings)}
+        </ul>
+       </div>`
+    : '';
 
+  const stepsHtml = r.steps && r.steps.length
+    ? `<div class="modal-section">
+        <h3 class="section-title">Steps</h3>
+        <ol class="steps-list">
+          ${r.steps.map((s, i) => `<li><span class="step-num">${i + 1}</span><span>${s}</span></li>`).join('')}
+        </ol>
+       </div>`
+    : '';
 
-document.addEventListener("DOMContentLoaded", () => {
+  return `
+    <div class="modal" style="display:flex">
+      <div class="modal-content">
+        <button class="close-btn mobile-only">✕</button>
+        ${imageHtml}
+        <div class="modal-header">
+          <div class="title">${r.title}</div>
+          <div class="modal-meta">
+            <span class="season-pill" style="background:${season.bg};color:${season.color}">${season.label}</span>
+            <span class="score-pill">${'★'.repeat(r.score)}${'☆'.repeat(5 - r.score)}</span>
+          </div>
+        </div>
+        <div class="tags">${allTags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+        <div class="modal-divider"></div>
+        ${ingredientsHtml}
+        ${stepsHtml}
+      </div>
+    </div>`;
+}
 
-  // Change href depending on screen width
-  const isMobile = window.innerWidth <= 1000;
-  const container = document.getElementById("modal-container");
+function attachCardListeners() {
+  const container = document.getElementById('modal-container');
 
-  // Add click listener to all cards
-  document.querySelectorAll(".recipe-card").forEach(card => {
-    card.addEventListener("click", async (e) => {
-      e.preventDefault();
-
+  document.querySelectorAll('.recipe-card').forEach(card => {
+    card.addEventListener('click', () => {
       const recipeId = card.dataset.recipe;
-      if (!recipeId) return;
+      const recipe = allRecipes.find(r => r.id === recipeId);
+      if (!recipe) return;
 
-      const modalUrl = `modals/modal-${recipeId}.html`;
+      container.innerHTML = buildModalHtml(recipe);
 
-      try {
-        const res = await fetch(modalUrl);
-        const modalHtml = await res.text();
+      const modal = container.querySelector('.modal');
+      const closeBtn = modal.querySelector('.close-btn');
+      if (closeBtn) closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
 
-        // Replace the content of the modal container
-        container.innerHTML = modalHtml;
+      // Servings controls
+      const baseServings = recipe.number_servings || 1;
+      const countEl = modal.querySelector('#servings-count');
+      const listEl  = modal.querySelector('#ingredients-list');
 
-        const modal = container.querySelector(".modal");
-        if (modal) {
-          modal.style.display = "flex";
-           // Attach listener to close button (if present)
-          const closeBtn = modal.querySelector(".close-btn");
-          if (closeBtn) {
-            closeBtn.addEventListener("click", () => {
-              modal.style.display = "none";
-          });
-        }
-        } else {
-          console.warn(`Modal not found in ${modalUrl}`);
-        }
-      } catch (err) {
-        console.error(`Could not load modal from ${modalUrl}`, err);
+      if (countEl && listEl) {
+        let current = baseServings;
+
+        modal.querySelector('#servings-up').addEventListener('click', () => {
+          current++;
+          countEl.textContent = current;
+          listEl.innerHTML = renderIngredients(recipe.ingredients, current, baseServings);
+        });
+
+        modal.querySelector('#servings-down').addEventListener('click', () => {
+          if (current <= 1) return;
+          current--;
+          countEl.textContent = current;
+          listEl.innerHTML = renderIngredients(recipe.ingredients, current, baseServings);
+        });
       }
     });
   });
 
-  // Close when clicking outside
-  window.addEventListener("click", (event) => {
-    const modal = container.querySelector(".modal");
-    if (modal && event.target === modal) {
-      modal.style.display = "none";
+  window.addEventListener('click', (e) => {
+    const modal = container.querySelector('.modal');
+    if (modal && e.target === modal) modal.style.display = 'none';
+  });
+}
+
+window.closeModal = function () {
+  const modal = document.querySelector('#modal-container .modal');
+  if (modal) modal.style.display = 'none';
+};
+
+/* ============================================================
+   FILTER TAGS
+   ============================================================ */
+function setupFilterGroup(groupId, tagSet, recipes) {
+  document.querySelectorAll(`#${groupId} .filter-tag`).forEach(tag => {
+    tag.addEventListener('click', () => {
+      const val = tag.dataset.tag;
+      const isActive = tag.classList.toggle('active');
+      if (isActive) tagSet.add(val);
+      else tagSet.delete(val);
+      renderCards(recipes);
+    });
+  });
+}
+
+/* ============================================================
+   NAVBAR SMOOTH SCROLL
+   ============================================================ */
+document.querySelectorAll('.nav-right a').forEach(link => {
+  link.addEventListener('click', function (e) {
+    const href = this.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
     }
   });
+});
 
+/* ============================================================
+   RELOAD ON BREAKPOINT CROSS
+   ============================================================ */
+let lastIsMobile = window.innerWidth <= 1000;
+window.addEventListener('resize', () => {
+  const isMobile = window.innerWidth <= 1000;
+  if (isMobile !== lastIsMobile) location.reload();
+  lastIsMobile = isMobile;
+});
 
-  // Optional: global close function
-  window.closeModal = function () {
-    const modal = container.querySelector(".modal");
-    if (modal) modal.style.display = "none";
-  };
+/* ============================================================
+   INIT
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const res = await fetch('assets/data/recipes.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    allRecipes = await res.json();
+  } catch (err) {
+    console.error('Could not load recipes.json:', err);
+    document.getElementById('recipesGrid').innerHTML =
+      '<p class="no-results">Failed to load recipes. Make sure assets/data/recipes.json exists.</p>';
+    return;
+  }
+
+  renderCards(allRecipes);
+
+  setupFilterGroup('fieldFilter',   selectedFields,  allRecipes);
+  setupFilterGroup('langFilter',    selectedLangs,   allRecipes);
+  setupFilterGroup('SimRealFilter', selectedSimReal, allRecipes);
+  setupFilterGroup('seasonFilter',  selectedSeasons, allRecipes);
 });

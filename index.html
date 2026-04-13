@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
+
   <!-- Navbar -->
   <nav class="navbar">
     <div class="nav-left">Recipes</div>
@@ -15,281 +16,34 @@
   <!-- Hero Section -->
   <header class="hero">
     <div class="hero-content">
-      <h1>Projects</h1>
       <div class="filters">
-        <div class="filter-group" id="fieldFilter">
-          <span class="filter-tag" data-tag="Computer Vision">Computer Vision</span>
-          <span class="filter-tag" data-tag="Optimization">Optimization</span>
-          <span class="filter-tag" data-tag="Control">Control</span>
-          <span class="filter-tag" data-tag="Path Planning">Path Planning</span>
-          <span class="filter-tag" data-tag="API">API</span>
-          <span class="filter-tag" data-tag="Graph Search">Graph Search</span>
-          <span class="filter-tag" data-tag="Simulation">Object Oriented Programming</span>
-          <span class="filter-tag" data-tag="Deep Learning">Deep Learning</span>
-          <span class="filter-tag" data-tag="Reinforcement Learning">Reinforcement Learning</span>
-          <span class="filter-tag" data-tag="System Identification">System Identification</span>
-          <span class="filter-tag" data-tag="Microcontroller">Microcontroller</span>
-          <span class="filter-tag" data-tag="Signal Processing">Signal Processing</span>
-          <span class="filter-tag" data-tag="Simulation">Simulation</span>
-          <span class="filter-tag" data-tag="RTOS">RTOS</span>
 
+        <div class="filter-row">
+          <div class="filter-group" id="seasonFilter">
+            <span class="filter-tag" data-tag="spring">🌿 Spring</span>
+            <span class="filter-tag" data-tag="summer">☀️ Summer</span>
+            <span class="filter-tag" data-tag="autumn">🍂 Autumn</span>
+            <span class="filter-tag" data-tag="winter">❄️ Winter</span>
+          </div>
         </div>
-        <div class="filter-group" id="langFilter">
-          <span class="filter-tag" data-tag="Python">Python</span>
-          <span class="filter-tag" data-tag="C">C</span>
-          <span class="filter-tag" data-tag="C++">C++</span>
-          <span class="filter-tag" data-tag="MATLAB">MATLAB</span>
-          <span class="filter-tag" data-tag="Assembly">Assembly</span>
-        </div>
-        <div class="filter-group" id="SimRealFilter">
-          <span class="filter-tag" data-tag="Simulation">Simulation</span>
-          <span class="filter-tag" data-tag="Real Life">Real Life</span>
-        </div>
+
       </div>
     </div>
   </header>
 
   <!-- Projects Section -->
   <section id="recipes" class="recipes-section">
-    <div class="recipes-grid">
-      <div class="recipe-card" data-field="API, Optimization, Graph search" data-lang="Python, C++" data-simreal="Simulation" data-recipe="sncf">
-        <div class="card-top">
-          <img src="assets/images/sncf/demo_screenshot.png" alt="SNCF Project Image" class="recipe-image" />
-          <h3>SNCF Project</h3>
-          <p>
-            Built an app in python to find the least costly path between two stations using Dijkstra's algorithm with early termination.
-          </p>
-        </div>
-        <div class="card-bottom">
-          <div class="tags">
-            <span class="tag">API</span>
-            <span class="tag">Optimization</span>
-            <span class="tag">Graph Search</span>
-            <span class="tag">Python</span>
-            <span class="tag">C++</span>
-            <span class="tag">Simulation</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="recipe-card" data-field="Optimization, Path Planning, Control, Computer Vision" data-lang="Python" data-simreal="Simulation, Real Life" data-recipe="drone">
-        <div class="card-top">
-          <img src="assets/images/drone/drone.jpg" alt="Drone Project Image" class="recipe-image" />
-          <h3>Drone Project</h3>
-          <p>
-            Created the control for a drone to detect gates and navigate through them using minimum jerk trajectories.
-          </p>
-        </div>
-        <div class="card-bottom">
-          <div class="tags">
-            <span class="tag">Optimization</span>
-            <span class="tag">Path Planning</span>
-            <span class="tag">Control</span>
-            <span class="tag">Computer Vision</span>
-            <span class="tag">Python</span>
-            <span class="tag">Simulation</span>
-            <span class="tag">Real Life</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="recipe-card" data-field="Simulation, Object Oriented Programming" data-lang="C++" data-simreal="Simulation" data-recipe="tchanz">
-        <div class="card-top">
-          <img src="assets/images/tchanz/tchanz.png" alt="Tchanz Project Image" class="recipe-image" />
-          <h3>Anthill Simulation</h3>
-          <p>
-            Created a simulation of an anthill using object-oriented programming in C++. 
-          </p>
-        </div>
-        <div class="card-bottom">
-          <div class="tags">
-            <span class="tag">Simulation</span>
-            <span class="tag">Object Oriented Programming</span>
-            <span class="tag">C++</span>
-            <span class="tag">Simulation</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="recipe-card" data-field="Deep Learning, Computer Vision" data-lang="Python" data-simreal="Simulation" data-recipe="dlfav">
-        <div class="card-top">
-          <img src="assets/images/DLFAV/sample_aux_outputs.png" alt="DLFAV Project Image" class="recipe-image" />
-          <h3>End-to-End Planning for Autonomous Driving</h3>
-          <p>
-            Developed an end-to-end planning system for autonomous driving through deep learning. 
-          </p>
-        </div>
-        <div class="card-bottom">
-          <div class="tags">
-            <span class="tag">Deep Learning</span>
-            <span class="tag">Computer Vision</span>
-            <span class="tag">Python</span>
-            <span class="tag">Simulation</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- <div class="recipe-card" data-field="Deep Learning" data-lang="Python" data-simreal="Simulation" data-recipe="classification">
-        <div class="card-top">
-          <video autoplay loop muted playsinline class="project-video">
-            <source src="assets/images/tchanz/Demo.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          <h3>Image Classification project</h3>
-          <p>
-            Created a simulation of an anthill using object-oriented programming in C++. 
-          </p>
-        </div>
-        <div class="card-bottom">
-          <div class="tags">
-            <span class="tag">Deep Learning</span>
-            <span class="tag">Python</span>
-            <span class="tag">Simulation</span>
-          </div>
-        </div>
-      </div> -->
-
-      <div class="recipe-card" data-field="Reinforcement Learning, Control" data-lang="Python" data-simreal="Simulation" data-recipe="leggedrl">
-        <div class="card-top">
-          <img src="assets/images/Legged_robots/Demo.png" alt="leggedRL Project Image" class="recipe-image" />
-          <h3>Quadruped RL project</h3>
-          <p>
-            Taught a quadruped robot to walk using reinforcement learning in a simulated environment. 
-          </p>
-        </div>
-        <div class="card-bottom">
-          <div class="tags">
-            <span class="tag">Reinforcement Learning</span>
-            <span class="tag">Control</span>            
-            <span class="tag">Python</span>
-            <span class="tag">Simulation</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="recipe-card" data-field="System Identification, Control, Reinforcement Learning" data-lang="Python" data-simreal="Simulation, Real Life" data-recipe="dea">
-        <div class="card-top">
-          <img src="assets/images/dea/dea.jpg" alt="DEA Project Image" class="recipe-image" />
-          <h3>Diealectric Elastomer Actuator (DEA) Research</h3>
-          <p>
-           Worked on the characterization and control of a new type of DEA using a custom-made test bench. 
-          </p>
-        </div>
-        <div class="card-bottom">
-          <div class="tags">
-            <span class="tag">System Identification</span>
-            <span class="tag">Reinforcement Learning</span>
-            <span class="tag">Control</span>
-            <span class="tag">Python</span>
-            <span class="tag">Simulation</span>
-            <span class="tag">Real Life</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="recipe-card" data-field="Optimization, Control" data-lang="Matlab" data-simreal="Simulation" data-recipe="carmpc">
-        <div class="card-top">
-          <img src="assets/images/carMPC/carmpc.png" alt="carMPC Project Image" class="recipe-image" />
-          <h3>Car Model Predictive Control Project</h3>
-          <p>
-            Used Model Predictive Control on a car to make it capable of overtaking, adjusting its speed, and avoiding collisions.
-          </p>
-        </div>
-        <div class="card-bottom">
-          <div class="tags">
-            <span class="tag">Optimization</span>
-            <span class="tag">Control</span>
-            <span class="tag">Matlab</span>
-            <span class="tag">Simulation</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="recipe-card" data-field="Microcontroller" data-lang="Assembly" data-simreal="Real Life" data-recipe="microcontroller">
-        <div class="card-top">
-          <img src="assets/images/mcu/mcu.png" alt="Microcontroller Project Image" class="recipe-image" />
-          <h3>Microcontroller Project</h3>
-          <p>
-            Programmed a microcontroller using Assembly language to demonstrate its potential in an intelligent house project. 
-          </p>
-        </div>
-        <div class="card-bottom">
-          <div class="tags">
-            <span class="tag">Microcontroller</span>
-            <span class="tag">Assembly</span>
-            <span class="tag">Real Life</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="recipe-card" data-field="RTOS,Microcontroller, Path Planning, Control, Signal Processing" data-lang="C" data-simreal="Real Life" data-recipe="epuck">
-        <div class="card-top">
-          <img src="assets/images/epuck/Epuck.png" alt="Epuck Project Image" class="recipe-image" />
-          <h3>RTOS robot project</h3>
-          <p>
-            Developed the control in C for an RTOS based robot to navigate through a tunnel using IR sensors and a microphone.
-          </p>
-        </div>
-        <div class="card-bottom">
-          <div class="tags">
-            <span class="tag">RTOS</span>
-            <span class="tag">Microcontroller</span>
-            <span class="tag">Control</span>
-            <span class="tag">Signal Processing</span>
-            <span class="tag">Path Planning</span>
-            <span class="tag">C</span>
-            <span class="tag">Real Life</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="recipe-card" data-field="Computer Vision, Path Planning, Control" data-lang="Python" data-simreal="Real Life" data-recipe="thymio">
-        <div class="card-top">
-          <img src="assets/images/thymio/thymio.png" alt="Drone Project Image" class="recipe-image" />
-          <h3>Thymio Project</h3>
-          <p>
-            Programmed a Thymio robot to navigate an environment using Dijkstra’s algorithm for path planning and obstacle avoidance.
-            </p>
-        </div>
-        <div class="card-bottom">
-          <div class="tags">
-            <span class="tag">Path Planning</span>
-            <span class="tag">Computer Vision</span>
-            <span class="tag">Control</span>
-            <span class="tag">Python</span>
-            <span class="tag">Real Life</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- <div class="recipe-card" data-field="Optimization, Path Planning" data-lang="C++" data-simreal="Simulation" data-recipe="powergridrl">
-        <div class="card-top">
-          <img src="assets/images/drone/drone.jpg" alt="Drone Project Image" class="project-image" />
-          <h3>PowerGrid Vulnerability detection RL</h3>
-          <p>
-            Created a simulation of an anthill using object-oriented programming in C++. 
-            </p>
-        </div>
-        <div class="card-bottom">
-          <div class="tags">
-            <span class="tag">Optimization</span>
-            <span class="tag">Path Planning</span>
-            <span class="tag">Python</span>
-            <span class="tag">Simulation</span>
-            <span class="tag">Real Life</span>
-          </div>
-        </div>
-      </div> -->
-    
+    <div class="recipes-grid" id="recipesGrid">
+      <!-- Cards injected by JS -->
     </div>
   </section>
 
   <!-- Footer -->
   <footer>
-    <p>© 2025 Mathéo Taillandier</p>
+    <p>© 2026 Mathéo Taillandier</p>
   </footer>
+
   <div id="modal-container"></div>
   <script src="assets/js/main.js" defer></script>
-  
 </body>
 </html>
