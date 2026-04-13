@@ -1,1 +1,3 @@
 run using `uv run python3 -m http.server 8000` and going on `http://0.0.0.0:8000/` in the browser. 
+
+or accessible at [https://matheotaillandier.github.io/Recipes/](https://matheotaillandier.github.io/Recipes/)
