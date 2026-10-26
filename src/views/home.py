@@ -1,4 +1,5 @@
 import html
+import random
 
 import streamlit as st
 
@@ -19,7 +20,8 @@ with top_left:
     search = st.text_input("🔎 Search", placeholder="Recipe name or ingredient, e.g. “carrot”",
                            key="search")
 with top_mid:
-    sort_by = st.selectbox("↕️ Sort by", ["Name", "Best rated", "Quickest", "Cheapest", "Newest"],
+    sort_by = st.selectbox("↕️ Sort by",
+                           ["Name", "Best rated", "Quickest", "Cheapest", "Newest", "🎲 Random"],
                            key="sort_by")
 with top_right:
     people = ui.people_input("people_home")
@@ -30,15 +32,11 @@ with st.container(horizontal=True, gap="medium", key="filter_row"):
     meal_filter = st.pills("Meal", list(MEALS), format_func=MEALS.get, selection_mode="multi", key="f_meal")
     season_filter = st.pills("Season", list(SEASONS), format_func=SEASONS.get, selection_mode="multi",
                              key="f_season")
-
-with st.expander("More filters"):
-    c1, c2, c3 = st.columns(3)
-    diet_filter = c1.pills("Diet", list(DIETS), format_func=DIETS.get, selection_mode="multi", key="f_diet")
-    price_filter = c2.pills("Price", list(PRICES), format_func=PRICES.get, selection_mode="multi",
+    diet_filter = st.pills("Diet", list(DIETS), format_func=DIETS.get, selection_mode="multi", key="f_diet")
+    price_filter = st.pills("Price", list(PRICES), format_func=PRICES.get, selection_mode="multi",
                             key="f_price")
-    max_time = c3.slider("Ready in at most (minutes)", 0, 240, 240, step=5, key="f_time",
+    max_time = st.slider("Ready in at most (minutes)", 0, 240, 240, step=5, key="f_time", width=260,
                          help="Preparation + cooking time. Leave at 240 to show everything.")
-
 
 def matches(recipe: dict) -> bool:
     if search:
@@ -70,7 +68,13 @@ sort_keys = {
     "Cheapest": lambda r: (r["price"] or 9, r["cost"] or 10_000),
     "Newest": lambda r: "".join(chr(255 - ord(c)) for c in (r["created"] or "")),
 }
-filtered.sort(key=sort_keys[sort_by])
+if sort_by == "🎲 Random":
+    # Keep the same order while other settings change; the Shuffle button picks a new one.
+    st.session_state.setdefault("shuffle_seed", random.random())
+    filtered.sort(key=sort_keys["Name"])
+    random.Random(st.session_state.shuffle_seed).shuffle(filtered)
+else:
+    filtered.sort(key=sort_keys[sort_by])
 
 # ── Results ─────────────────────────────────────────────────────────────────
 if not recipes:
@@ -82,8 +86,14 @@ if not recipes:
         st.page_link(ui.IMPORT, label="Import a recipe file", icon="📥")
     st.stop()
 
-st.caption(f"{len(filtered)} of {len(recipes)} recipe{'s' if len(recipes) != 1 else ''} · "
-           f"quantities shown for **{people} {'person' if people == 1 else 'people'}**")
+with st.container(horizontal=True, vertical_alignment="center"):
+    st.caption(f"{len(filtered)} of {len(recipes)} recipe{'s' if len(recipes) != 1 else ''} · "
+               f"quantities shown for **{people} {'person' if people == 1 else 'people'}**")
+    if sort_by == "🎲 Random":
+        st.space("stretch")
+        if st.button("Shuffle", icon="🎲", key="shuffle"):
+            st.session_state.shuffle_seed = random.random()
+            st.rerun()
 
 if not filtered:
     st.markdown('<div class="rb-empty"><div>🔍</div><h3>No recipe matches these filters</h3>'
