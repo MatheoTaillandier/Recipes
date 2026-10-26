@@ -1,0 +1,31 @@
+{
+  "title": "Roasted garlic tomatoes",
+  "description": "Sweet, jammy tomatoes roasted with garlic and olive oil. Perfect on toast or with pasta.",
+  "image": "tomato-recipe.jpg",
+  "servings": 4,
+  "seasons": ["summer"],
+  "meals": ["lunch", "dinner"],
+  "course": "starter",
+  "diet": "vegan",
+  "prep_time": 10,
+  "cook_time": 25,
+  "price": 1,
+  "cost": 6,
+  "rating": 4,
+  "ingredients": [
+    {"quantity": 8, "unit": "", "name": "ripe tomatoes"},
+    {"quantity": 2, "unit": "tbsp", "name": "olive oil"},
+    {"quantity": 2, "unit": "clove", "name": "garlic, minced"},
+    {"quantity": 1, "unit": "tsp", "name": "salt"},
+    {"quantity": 0.5, "unit": "tsp", "name": "black pepper"},
+    {"quantity": 1, "unit": "handful", "name": "fresh basil"}
+  ],
+  "steps": [
+    "Preheat the oven to 200 °C (400 °F).",
+    "Cut the tomatoes in half and place them cut side up on a baking sheet.",
+    "Drizzle with olive oil, then sprinkle with the garlic, salt and pepper.",
+    "Roast for 20–25 minutes, until soft and slightly caramelised.",
+    "Scatter the torn basil leaves on top and serve warm."
+  ],
+  "notes": "Leftovers keep 3 days in the fridge — blend them into a quick pasta sauce."
+}

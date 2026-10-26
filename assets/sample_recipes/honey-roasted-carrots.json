@@ -1,0 +1,31 @@
+{
+  "title": "Honey-roasted carrots",
+  "description": "Tender carrots glazed with honey and thyme — a cosy winter main for vegetarian evenings.",
+  "image": "carot-recipe.jpg",
+  "servings": 4,
+  "seasons": ["autumn", "winter"],
+  "meals": ["dinner"],
+  "course": "main",
+  "diet": "vegetarian",
+  "prep_time": 15,
+  "cook_time": 35,
+  "price": 1,
+  "cost": 5,
+  "rating": 5,
+  "ingredients": [
+    {"quantity": 800, "unit": "g", "name": "carrots"},
+    {"quantity": 2, "unit": "tbsp", "name": "olive oil"},
+    {"quantity": 2, "unit": "tbsp", "name": "honey"},
+    {"quantity": 3, "unit": "clove", "name": "garlic"},
+    {"quantity": 4, "unit": "", "name": "sprigs of thyme"},
+    {"quantity": 1, "unit": "tsp", "name": "salt"},
+    {"quantity": null, "unit": "", "name": "Pepper, to taste"}
+  ],
+  "steps": [
+    "Preheat the oven to 200 °C (400 °F).",
+    "Peel the carrots and cut the large ones in half lengthwise.",
+    "Toss them with the olive oil, honey, crushed garlic, thyme, salt and pepper.",
+    "Spread on a baking tray and roast for 30–35 minutes, turning halfway, until golden and tender."
+  ],
+  "notes": ""
+}
