@@ -86,6 +86,36 @@ def save_recipe(recipe: dict) -> dict:
     return recipe
 
 
+def duplicate_key(recipe: dict) -> str:
+    """Two recipes are the same if their names match, ignoring case, accents and punctuation."""
+    return slugify(recipe.get("title") or "")
+
+
+def find_duplicate(recipe: dict, recipes: list[dict]) -> dict | None:
+    key = duplicate_key(recipe)
+    return next((r for r in recipes if duplicate_key(r) == key), None)
+
+
+def save_imported(recipe: dict, replace: dict | None = None) -> dict:
+    """Save an imported recipe (and its embedded photo), optionally over an existing one."""
+    from .importer import decode_image_data  # local import: importer is optional for storage
+
+    recipe = dict(recipe)
+    decoded = decode_image_data(recipe.pop("image_data", None) or "")
+    if replace:
+        recipe.update(id=replace["id"], created=replace["created"], image=replace["image"])
+        if not recipe["rating"]:
+            recipe["rating"] = replace["rating"]
+    else:
+        recipe.update(id="", image=None)
+    saved = save_recipe(recipe)
+    if decoded:
+        remove_image(saved)
+        saved["image"] = store_image(saved["id"], *decoded)
+        saved = save_recipe(saved)
+    return saved
+
+
 def delete_recipe(recipe_id: str) -> None:
     recipe = get_recipe(recipe_id)
     if recipe is None:
