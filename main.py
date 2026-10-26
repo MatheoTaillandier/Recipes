@@ -1,4 +1,7 @@
 import subprocess
+import sys
+from pathlib import Path
 
 if __name__ == "__main__":
-    subprocess.run(["uv", "run", "streamlit", "run", "src/app.py"], check=False)
+    app = Path(__file__).parent / "src" / "app.py"
+    subprocess.run([sys.executable, "-m", "streamlit", "run", str(app), *sys.argv[1:]], check=False)

@@ -1,0 +1,29 @@
+{
+  "title": "Easy chocolate mousse",
+  "description": "A classic French mousse with only three ingredients. Make it the day before!",
+  "image": null,
+  "servings": 6,
+  "seasons": [],
+  "meals": ["lunch", "dinner"],
+  "course": "dessert",
+  "diet": "vegetarian",
+  "prep_time": 20,
+  "cook_time": 0,
+  "price": 2,
+  "cost": 8,
+  "rating": 5,
+  "ingredients": [
+    {"quantity": 200, "unit": "g", "name": "dark chocolate (70%)"},
+    {"quantity": 6, "unit": "", "name": "eggs"},
+    {"quantity": 1, "unit": "pinch", "name": "salt"},
+    {"quantity": 30, "unit": "g", "name": "sugar"}
+  ],
+  "steps": [
+    "Melt the chocolate gently over a pan of simmering water, then let it cool slightly.",
+    "Separate the eggs. Stir the yolks one by one into the chocolate.",
+    "Whisk the whites with the salt until they form soft peaks, then add the sugar and whisk until firm.",
+    "Fold a third of the whites into the chocolate to loosen it, then gently fold in the rest.",
+    "Pour into glasses and chill for at least 4 hours."
+  ],
+  "notes": "Use very fresh eggs."
+}

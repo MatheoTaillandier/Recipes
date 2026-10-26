@@ -1,0 +1,7 @@
+# Your personal recipes and photos stay on this computer, never on GitHub.
+my_recipes/
+
+# Python
+.venv/
+__pycache__/
+*.pyc

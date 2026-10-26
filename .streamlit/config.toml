@@ -1,4 +1,24 @@
 [server]
-
 runOnSave = true
 fileWatcherType = "auto"
+# Recipe photos can be large; allow uploads up to 50 MB.
+maxUploadSize = 50
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "minimal"
+showErrorDetails = "full"
+
+[theme]
+base = "light"
+primaryColor = "#c8642b"
+backgroundColor = "#fffaf5"
+secondaryBackgroundColor = "#f7ece1"
+textColor = "#2f2620"
+linkColor = "#a84f1f"
+borderColor = "#ead9c8"
+headingFont = "serif"
+baseRadius = "0.7rem"
+showWidgetBorder = true
