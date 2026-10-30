@@ -44,7 +44,7 @@ def matches(recipe: dict) -> bool:
         haystack = [recipe["title"], recipe["description"], *(i["name"] for i in recipe["ingredients"])]
         if not any(needle in text.lower() for text in haystack):
             return False
-    if course_filter and recipe["course"] not in course_filter:
+    if course_filter and not set(course_filter) & set(recipe["courses"]):
         return False
     if meal_filter and not set(meal_filter) & set(recipe["meals"]):
         return False
@@ -108,12 +108,12 @@ def card(recipe: dict) -> None:
         if image:
             st.image(str(image), width="stretch")
         else:
-            st.markdown(f'<div class="rb-placeholder">{COURSE_EMOJI[recipe["course"]]}</div>',
+            st.markdown(f'<div class="rb-placeholder">{COURSE_EMOJI[recipe["courses"][0]]}</div>',
                         unsafe_allow_html=True)
         st.markdown(f'<p class="rb-card-title">{html.escape(recipe["title"])}</p>'
                     f'<div class="rb-card-desc">{html.escape(recipe["description"]) or "&nbsp;"}</div>',
                     unsafe_allow_html=True)
-        meta = [COURSES[recipe["course"]]]
+        meta = [" · ".join(COURSES[c] for c in recipe["courses"])]
         if total_time(recipe):
             meta.append(f"⏱️ {format_minutes(total_time(recipe))}")
         if recipe["cost"]:

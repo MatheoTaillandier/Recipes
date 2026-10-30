@@ -57,7 +57,7 @@ with text_col:
     if recipe["description"]:
         st.markdown(f"<p style='font-size:1.1rem'>{html.escape(recipe['description'])}</p>",
                     unsafe_allow_html=True)
-    chips = [COURSES[recipe["course"]]]
+    chips = [COURSES[c] for c in recipe["courses"]]
     chips += [MEALS[m] for m in recipe["meals"]]
     chips += [SEASONS[s] for s in recipe["seasons"]] or ["🗓️ All year"]
     if recipe["diet"]:

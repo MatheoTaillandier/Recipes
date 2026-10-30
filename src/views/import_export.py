@@ -46,7 +46,7 @@ with st.container(border=True):
         elif len(found) > 1:
             st.success(f"Found **{len(found)} recipes** in this file.", icon="✅")
             for recipe in found:
-                st.markdown(f"- **{recipe['title']}** — {COURSES[recipe['course']]}")
+                st.markdown(f"- **{recipe['title']}** — {', '.join(COURSES[c] for c in recipe['courses'])}")
             if st.button(f"Import all {len(found)} recipes", icon="📥", type="primary"):
                 for recipe in found:
                     image_data = recipe.pop("image_data", None)
