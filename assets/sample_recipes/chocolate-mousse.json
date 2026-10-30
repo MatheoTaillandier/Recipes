@@ -5,7 +5,7 @@
   "servings": 6,
   "seasons": [],
   "meals": ["lunch", "dinner"],
-  "course": "dessert",
+  "courses": ["dessert"],
   "diet": "vegetarian",
   "prep_time": 20,
   "cook_time": 0,

@@ -124,8 +124,9 @@ def from_schema_org(data: dict) -> dict:
     category = " ".join(data.get("recipeCategory") or []) if isinstance(data.get("recipeCategory"), list) \
         else str(data.get("recipeCategory") or "")
     category = category.lower()
-    course = "dessert" if "dessert" in category else "starter" if any(
-        k in category for k in ("starter", "appetizer", "entrée", "entree")) else "main"
+    courses = [c for c, words in (("starter", ("starter", "appetizer", "entrée", "entree", "soup")),
+                                  ("main", ("main", "dinner", "lunch")), ("dessert", ("dessert",)))
+               if any(w in category for w in words)]
     keywords = str(data.get("keywords") or "").lower() + " " + category
     return normalize({
         "title": html.unescape(str(data.get("name") or "")),
@@ -133,7 +134,7 @@ def from_schema_org(data: dict) -> dict:
         "servings": _first_int(data.get("recipeYield")),
         "prep_time": parse_duration(data.get("prepTime")),
         "cook_time": parse_duration(data.get("cookTime")),
-        "course": course,
+        "courses": courses,
         "meals": [m for m in ("breakfast", "lunch", "dinner", "snack") if m in keywords],
         "seasons": [s for s in ("spring", "summer", "autumn", "winter") if s in keywords],
         "ingredients": [parse_ingredient_line(str(i)) for i in data.get("recipeIngredient") or []],

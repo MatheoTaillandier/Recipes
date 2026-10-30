@@ -66,7 +66,7 @@ with st.container(border=True):
             st.success(f"Found **{len(found)} recipes** in this file.", icon="✅")
             for recipe in found:
                 status = " · *already in your book*" if storage.duplicate_key(recipe) in duplicates else " · 🆕 new"
-                st.markdown(f"- **{recipe['title']}** — {COURSES[recipe['course']]}{status}")
+                st.markdown(f"- **{recipe['title']}** — {', '.join(COURSES[c] for c in recipe['courses'])}{status}")
             replace = False
             if duplicates:
                 choice = st.radio(

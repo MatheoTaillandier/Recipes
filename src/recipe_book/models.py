@@ -34,7 +34,7 @@ def empty_recipe() -> dict:
         "servings": 4,
         "seasons": [],
         "meals": [],
-        "course": "main",
+        "courses": ["main"],
         "diet": None,
         "prep_time": 0,
         "cook_time": 0,
@@ -103,10 +103,10 @@ def normalize(data: dict) -> dict:
     recipe["seasons"] = [s for s in SEASONS if s in seasons]
     meals = [m.lower() for m in _as_list(data.get("meals"))]
     recipe["meals"] = [m for m in MEALS if m in meals]
-    course = str(data.get("course") or "main").lower()
-    recipe["course"] = {"desert": "dessert", "entree": "starter"}.get(course, course)
-    if recipe["course"] not in COURSES:
-        recipe["course"] = "main"
+    # Older files have a single "course"; a recipe can now belong to several parts of the meal.
+    aliases = {"desert": "dessert", "entree": "starter"}
+    courses = {aliases.get(c.lower(), c.lower()) for c in _as_list(_pick(data, "courses", "course"))}
+    recipe["courses"] = [c for c in COURSES if c in courses] or ["main"]
     diet = str(data.get("diet") or data.get("food_type") or "").lower()
     recipe["diet"] = diet if diet in DIETS else None
 

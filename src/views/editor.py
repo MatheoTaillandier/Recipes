@@ -26,7 +26,7 @@ def load_form(recipe: dict) -> None:
         "ed_title": recipe["title"],
         "ed_description": recipe["description"],
         "ed_servings": recipe["servings"],
-        "ed_course": recipe["course"],
+        "ed_courses": recipe["courses"],
         "ed_meals": recipe["meals"],
         "ed_seasons": recipe["seasons"],
         "ed_diet": recipe["diet"],
@@ -87,8 +87,8 @@ with st.container(border=True):
         st.number_input("🔪 Preparation time (minutes)", min_value=0, max_value=2000, step=5, key="ed_prep")
         st.number_input("🔥 Cooking time (minutes)", min_value=0, max_value=2000, step=5, key="ed_cook")
     with c2:
-        st.segmented_control("Part of the meal *", list(COURSES), format_func=COURSES.get, key="ed_course",
-                             required=True)
+        st.pills("Part of the meal *", list(COURSES), format_func=COURSES.get, selection_mode="multi",
+                 key="ed_courses", help="Pick as many as you like — a soup can be a starter and a main course.")
         st.pills("Meal", list(MEALS), format_func=MEALS.get, selection_mode="multi", key="ed_meals",
                  help="When would you eat this? Pick as many as you like.")
         st.pills("Season", list(SEASONS), format_func=SEASONS.get, selection_mode="multi", key="ed_seasons",
@@ -162,7 +162,7 @@ def collect() -> dict:
         "title": st.session_state.ed_title.strip(),
         "description": st.session_state.ed_description,
         "servings": st.session_state.ed_servings,
-        "course": st.session_state.ed_course or "main",
+        "courses": st.session_state.ed_courses,
         "meals": st.session_state.ed_meals,
         "seasons": st.session_state.ed_seasons,
         "diet": st.session_state.ed_diet,
@@ -191,6 +191,9 @@ if save:
     recipe = collect()
     if not recipe["title"]:
         st.error("Please give your recipe a name (at the top of the page).", icon="✋")
+        st.stop()
+    if not st.session_state.ed_courses:
+        st.error("Please pick at least one part of the meal (starter, main course or dessert).", icon="✋")
         st.stop()
     mine = storage.find_duplicate(recipe, storage.load_recipes()) if draft and is_new else None
     if mine:
