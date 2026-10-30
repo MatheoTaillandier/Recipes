@@ -2,7 +2,7 @@ import html
 
 import streamlit as st
 
-from recipe_book import importer, storage, ui
+from recipe_book import importer, pdf, storage, ui
 from recipe_book.models import (
     COURSES, DIETS, MEALS, PRICES, SEASONS, format_cost, format_ingredient, format_minutes,
     scale_factor, total_time,
@@ -39,9 +39,16 @@ with st.container(horizontal=True, key="recipe_actions"):
     st.space("stretch")
     if st.button("Edit", icon="✏️", type="primary"):
         st.switch_page(ui.EDITOR, query_params={"id": recipe["id"]})
-    st.download_button("Download", data=importer.export_recipes([recipe], storage.image_path),
-                       file_name=f"{recipe['id']}.json", mime="application/json", icon="💾",
-                       on_click="ignore", help="Save this recipe as a file to share it or keep a copy.")
+    with st.popover("Download", icon="💾"):
+        people = st.session_state.people
+        st.download_button(f"PDF — to print or read (for {people} {'person' if people == 1 else 'people'})",
+                           data=lambda: pdf.build_pdf(recipe, people, storage.image_path(recipe)),
+                           file_name=f"{recipe['id']}.pdf", mime="application/pdf", icon="📄",
+                           on_click="ignore", width="stretch")
+        st.download_button("Recipe file (.json) — to share or import again",
+                           data=lambda: importer.export_recipes([recipe], storage.image_path),
+                           file_name=f"{recipe['id']}.json", mime="application/json", icon="🗂️",
+                           on_click="ignore", width="stretch")
     if st.button("Delete", icon="🗑️"):
         confirm_delete()
 
