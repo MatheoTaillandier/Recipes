@@ -35,28 +35,53 @@ with st.container(border=True):
                 st.error("No recipe could be found in this file. Check that it is one of the supported "
                          "formats above.", icon="⚠️")
 
+        # The same recipe listed twice in one file is only imported once.
+        unique = {}
+        for recipe in found:
+            unique.setdefault(storage.duplicate_key(recipe), recipe)
+        found = list(unique.values())
+        existing = storage.load_recipes()
+        duplicates = {storage.duplicate_key(r): storage.find_duplicate(r, existing) for r in found}
+        duplicates = {k: v for k, v in duplicates.items() if v}
+
         if len(found) == 1:
             recipe = found[0]
+            mine = duplicates.get(storage.duplicate_key(recipe))
             st.success(f"Found **{recipe['title']}** · {len(recipe['ingredients'])} ingredients · "
                        f"{len(recipe['steps'])} steps", icon="✅")
-            if st.button("Review and save this recipe", icon="👉", type="primary"):
+            if mine:
+                st.warning(f"You already have a recipe called **{mine['title']}**, so it won't be added "
+                           "a second time.", icon="♻️")
+                with st.container(horizontal=True):
+                    st.page_link(ui.RECIPE, label="Open my version", icon="👀", query_params={"id": mine["id"]})
+                    if st.button("Replace mine with this one", icon="🔁"):
+                        saved = storage.save_imported(recipe, replace=mine)
+                        ui.flash(f"“{saved['title']}” was updated from the file", "🔁")
+                        st.switch_page(ui.RECIPE, query_params={"id": saved["id"]})
+            elif st.button("Review and save this recipe", icon="👉", type="primary"):
                 st.session_state.editor_draft = recipe
                 st.session_state.pop("ed_loaded", None)
                 st.switch_page(ui.EDITOR)
         elif len(found) > 1:
             st.success(f"Found **{len(found)} recipes** in this file.", icon="✅")
             for recipe in found:
-                st.markdown(f"- **{recipe['title']}** — {COURSES[recipe['course']]}")
-            if st.button(f"Import all {len(found)} recipes", icon="📥", type="primary"):
-                for recipe in found:
-                    image_data = recipe.pop("image_data", None)
-                    recipe["image"] = None
-                    saved = storage.save_recipe(recipe)
-                    decoded = importer.decode_image_data(image_data) if image_data else None
-                    if decoded:
-                        saved["image"] = storage.store_image(saved["id"], *decoded)
-                        storage.save_recipe(saved)
-                ui.flash(f"{len(found)} recipes were imported", "📥")
+                status = " · *already in your book*" if storage.duplicate_key(recipe) in duplicates else " · 🆕 new"
+                st.markdown(f"- **{recipe['title']}** — {COURSES[recipe['course']]}{status}")
+            replace = False
+            if duplicates:
+                choice = st.radio(
+                    f"{len(duplicates)} of these recipes are already in your book. What should happen to them?",
+                    ["Skip them (keep my versions)", "Replace my versions with the ones from the file"],
+                    key="import_duplicates")
+                replace = choice.startswith("Replace")
+            to_import = [r for r in found if replace or storage.duplicate_key(r) not in duplicates]
+            if not to_import:
+                st.info("All these recipes are already in your book — there is nothing new to import.", icon="👍")
+            elif st.button(f"Import {len(to_import)} recipe{'s' if len(to_import) != 1 else ''}", icon="📥",
+                           type="primary"):
+                for recipe in to_import:
+                    storage.save_imported(recipe, replace=duplicates.get(storage.duplicate_key(recipe)))
+                ui.flash(f"{len(to_import)} recipe{'s were' if len(to_import) != 1 else ' was'} imported", "📥")
                 st.switch_page(ui.HOME)
 
 # ── Export ──────────────────────────────────────────────────────────────────
