@@ -195,6 +195,11 @@ if save:
     if not st.session_state.ed_courses:
         st.error("Please pick at least one part of the meal (starter, main course or dessert).", icon="✋")
         st.stop()
+    mine = storage.find_duplicate(recipe, storage.load_recipes()) if draft and is_new else None
+    if mine:
+        st.error(f"You already have a recipe called **{mine['title']}**. Give this one another name, "
+                 "or cancel to keep your version.", icon="♻️")
+        st.stop()
     image_data = original.get("image_data") if draft else None
     recipe.pop("image_data", None)
     if draft:
