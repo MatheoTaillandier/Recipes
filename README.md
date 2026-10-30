@@ -33,7 +33,8 @@ Developers can also run `uv run main.py`.
 
   Recipes you already have (same name, ignoring capitals and accents) are never added twice:
   you choose to keep your version or replace it with the one from the file.
-- **Download** a single recipe to share it, or **back up** your whole book (photos included).
+- **Download** a single recipe as a **PDF** (to print, with amounts for the number of people eating)
+  or as a recipe file to share it, or **back up** your whole book (photos included).
 
 ## Where are my recipes?
 
