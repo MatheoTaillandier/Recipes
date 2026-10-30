@@ -36,7 +36,6 @@ def load_form(recipe: dict) -> None:
         "ed_cost": recipe["cost"],
         "ed_steps": "\n".join(recipe["steps"]),
         "ed_notes": recipe["notes"],
-        "ed_remove_image": False,
     })
     rows = recipe["ingredients"] or [{"quantity": None, "unit": "", "name": ""}]
     table = pd.DataFrame(rows, columns=["quantity", "unit", "name"])
@@ -56,7 +55,8 @@ if draft and is_new:
                icon="📥")
 elif is_new:
     with st.container(horizontal=True, vertical_alignment="center"):
-        st.caption("Fill in what you know — only the name is required. You can always come back and edit it.")
+        st.caption("Fill in what you know — only the name and a photo are required. "
+                   "You can come back and edit it anytime.")
         st.page_link(ui.IMPORT, label="Have a recipe file? Import it", icon="📥")
 
 # ── General information ─────────────────────────────────────────────────────
@@ -70,11 +70,14 @@ with st.container(border=True):
     with right:
         current_image = storage.image_path(original) if not draft else None
         draft_image = importer.decode_image_data(original.get("image_data", "")) if draft else None
-        if current_image or draft_image:
+        has_photo = bool(current_image or draft_image)
+        upload = st.file_uploader("Replace the photo" if has_photo else "Photo *", type=storage.IMAGE_TYPES,
+                                  key=f"ed_photo_{load_key}",
+                                  help="A picture of the finished dish, shown on the recipe card. Required.")
+        if upload is not None:
+            st.image(upload, width=220)
+        elif has_photo:
             st.image(str(current_image) if current_image else draft_image[1], width=220)
-            st.checkbox("Remove this photo", key="ed_remove_image")
-        upload = st.file_uploader("Photo (optional)", type=storage.IMAGE_TYPES, key=f"ed_photo_{load_key}",
-                                  help="A picture of the finished dish, shown on the recipe card.")
 
 with st.container(border=True):
     st.subheader("Details")
@@ -192,17 +195,18 @@ if save:
     if not recipe["title"]:
         st.error("Please give your recipe a name (at the top of the page).", icon="✋")
         st.stop()
+    if upload is None and not has_photo:
+        st.error("Please add a photo of the dish (at the top of the page).", icon="📷")
+        st.stop()
     image_data = original.get("image_data") if draft else None
     recipe.pop("image_data", None)
     if draft:
         recipe["image"] = None  # an imported recipe never points to someone else's photo file
     saved = storage.save_recipe(recipe)
-    if upload is not None or st.session_state.ed_remove_image:
-        storage.remove_image(saved)
-        saved["image"] = None
     if upload is not None:
+        storage.remove_image(saved)
         saved["image"] = storage.store_image(saved["id"], upload.name, upload.getvalue())
-    elif image_data and not st.session_state.ed_remove_image:
+    elif image_data:
         decoded = importer.decode_image_data(image_data)
         if decoded:
             saved["image"] = storage.store_image(saved["id"], *decoded)

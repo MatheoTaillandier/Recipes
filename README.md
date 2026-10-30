@@ -22,7 +22,7 @@ Developers can also run `uv run main.py`.
   (starter / main / dessert), meal, season, diet, price and total time.
 - **People eating** — change the number at the top and every ingredient amount and cost is
   recalculated (on the cards and on each recipe page). The number is remembered for next time.
-- **Add a recipe** with the orange button. Enter the name, a photo, how many people the recipe is
+- **Add a recipe** with the orange button. Enter the name, a photo (required), how many people the recipe is
   for, preparation & cooking time, price, meal, part of the meal, season, ingredients and steps.
   Ingredients can be typed into the table or pasted as a list (“200 g flour”, “2 eggs”…).
 - **Edit** or **delete** any recipe from its page, and give it a star rating.
