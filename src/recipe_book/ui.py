@@ -31,6 +31,16 @@ h1, h2, h3 { letter-spacing: -0.01em; }
 .rb-step-text { padding-top: 0.15rem; line-height: 1.55; }
 .rb-empty { text-align: center; padding: 3rem 1rem; color: #7a6a5c; }
 .rb-empty div { font-size: 3.5rem; }
+/* Recipe cards: the whole box opens the recipe; the ingredients drop-down still works on its own. */
+[class*="st-key-rb-card-"] { position: relative; cursor: pointer;
+  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease; }
+[class*="st-key-rb-card-"]:hover { box-shadow: 0 8px 24px rgba(120, 70, 30, 0.15); transform: translateY(-2px);
+  border-color: #c8642b; }
+[class*="st-key-rb-card-"] .stElementContainer:has([data-testid="stPageLink"]) { position: static; }
+[class*="st-key-rb-card-"] [data-testid="stPageLink"] { height: 0; margin: 0; overflow: visible; }
+[class*="st-key-rb-card-"] [data-testid="stPageLink"] a { opacity: 0; height: 0; padding: 0; position: static; }
+[class*="st-key-rb-card-"] [data-testid="stPageLink"] a::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+[class*="st-key-rb-card-"] [data-testid="stExpander"] { position: relative; z-index: 2; cursor: auto; }
 @media print {
   header, [data-testid="stToolbar"], .rb-noprint, button { display: none !important; }
 }

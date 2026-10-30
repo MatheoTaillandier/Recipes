@@ -103,7 +103,8 @@ if not filtered:
 
 def card(recipe: dict) -> None:
     factor = scale_factor(recipe, people)
-    with st.container(border=True):
+    # The "rb-card" key lets the CSS stretch the recipe link over the whole box (see ui.CSS).
+    with st.container(border=True, key=f"rb-card-{recipe['id']}"):
         image = storage.image_path(recipe)
         if image:
             st.image(str(image), width="stretch")
@@ -127,7 +128,7 @@ def card(recipe: dict) -> None:
         with st.expander(f"🧂 Ingredients for {people}"):
             lines = [f"- {format_ingredient(i, factor)}" for i in recipe["ingredients"]]
             st.markdown("\n".join(lines) or "_No ingredients yet_")
-        st.page_link(ui.RECIPE, label="Open recipe", icon="👉", query_params={"id": recipe["id"]},
+        st.page_link(ui.RECIPE, label=f"Open {recipe['title']}", query_params={"id": recipe["id"]},
                      width="stretch")
 
 
