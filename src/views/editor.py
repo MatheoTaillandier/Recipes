@@ -10,8 +10,8 @@ draft = st.session_state.get("editor_draft")
 if recipe_id:
     original = storage.get_recipe(recipe_id)
     if original is None:
-        st.warning("This recipe could not be found. It may have been deleted.", icon="🤷")
-        st.page_link(ui.HOME, label="Back to all recipes", icon="⬅️")
+        st.warning("Cette recette est introuvable. Elle a peut-être été supprimée.", icon="🤷")
+        st.page_link(ui.HOME, label="Retour à toutes les recettes", icon="⬅️")
         st.stop()
     load_key = f"edit:{recipe_id}"
 elif draft:
@@ -49,67 +49,69 @@ if st.session_state.get("ed_loaded") != load_key:
     load_form(original)
 
 is_new = not recipe_id
-st.title("➕ New recipe" if is_new else f"✏️ Edit “{original['title']}”")
+st.title("➕ Nouvelle recette" if is_new else f"✏️ Modifier « {original['title']} »")
 if draft and is_new:
-    st.success("The recipe was read from your file. Check the details below, then click **Save recipe**.",
-               icon="📥")
+    st.success("La recette a été lue depuis votre fichier. Vérifiez les informations ci-dessous, puis cliquez "
+               "sur **Enregistrer la recette**.", icon="📥")
 elif is_new:
     with st.container(horizontal=True, vertical_alignment="center"):
-        st.caption("Fill in what you know — only the name and a photo are required. "
-                   "You can come back and edit it anytime.")
-        st.page_link(ui.IMPORT, label="Have a recipe file? Import it", icon="📥")
+        st.caption("Remplissez ce que vous savez — seuls le nom et une photo sont obligatoires. "
+                   "Vous pourrez la modifier à tout moment.")
+        st.page_link(ui.IMPORT, label="Vous avez un fichier de recette ? Importez-le", icon="📥")
 
 # ── General information ─────────────────────────────────────────────────────
 with st.container(border=True):
-    st.subheader("General")
+    st.subheader("Général")
     left, right = st.columns([3, 2], gap="large")
     with left:
-        st.text_input("Recipe name *", key="ed_title", placeholder="e.g. Grandma's apple pie")
-        st.text_area("Short description", key="ed_description", height=90,
-                     placeholder="What makes this dish special?")
+        st.text_input("Nom de la recette *", key="ed_title", placeholder="ex. La tarte aux pommes de mamie")
+        st.text_area("Courte description", key="ed_description", height=90,
+                     placeholder="Qu'est-ce qui rend ce plat spécial ?")
     with right:
         current_image = storage.image_path(original) if not draft else None
         draft_image = importer.decode_image_data(original.get("image_data", "")) if draft else None
         has_photo = bool(current_image or draft_image)
-        upload = st.file_uploader("Replace the photo" if has_photo else "Photo *", type=storage.IMAGE_TYPES,
+        upload = st.file_uploader("Remplacer la photo" if has_photo else "Photo *", type=storage.IMAGE_TYPES,
                                   key=f"ed_photo_{load_key}",
-                                  help="A picture of the finished dish, shown on the recipe card. Required.")
+                                  help="Une photo du plat terminé, affichée sur la fiche recette. Obligatoire.")
         if upload is not None:
             st.image(upload, width=220)
         elif has_photo:
             st.image(str(current_image) if current_image else draft_image[1], width=220)
 
 with st.container(border=True):
-    st.subheader("Details")
+    st.subheader("Détails")
     c1, c2, c3 = st.columns(3, gap="large")
     with c1:
-        st.number_input("👥 This recipe is for how many people? *", min_value=1, max_value=100, step=1,
+        st.number_input("👥 Pour combien de personnes ? *", min_value=1, max_value=100, step=1,
                         key="ed_servings",
-                        help="The quantities you enter below are for this number of people. The app "
-                             "recalculates them automatically when you cook for more or fewer people.")
-        st.number_input("🔪 Preparation time (minutes)", min_value=0, max_value=2000, step=5, key="ed_prep")
-        st.number_input("🔥 Cooking time (minutes)", min_value=0, max_value=2000, step=5, key="ed_cook")
+                        help="Les quantités saisies ci-dessous sont pour ce nombre de personnes. L'application "
+                             "les recalcule automatiquement quand vous cuisinez pour plus ou moins de monde.")
+        st.number_input("🔪 Temps de préparation (minutes)", min_value=0, max_value=2000, step=5, key="ed_prep")
+        st.number_input("🔥 Temps de cuisson (minutes)", min_value=0, max_value=2000, step=5, key="ed_cook")
     with c2:
-        st.pills("Part of the meal *", list(COURSES), format_func=COURSES.get, selection_mode="multi",
-                 key="ed_courses", help="Pick as many as you like — a soup can be a starter and a main course.")
-        st.pills("Meal", list(MEALS), format_func=MEALS.get, selection_mode="multi", key="ed_meals",
-                 help="When would you eat this? Pick as many as you like.")
-        st.pills("Season", list(SEASONS), format_func=SEASONS.get, selection_mode="multi", key="ed_seasons",
-                 help="Leave empty if this recipe works all year round.")
+        st.pills("Partie du repas *", list(COURSES), format_func=COURSES.get, selection_mode="multi",
+                 key="ed_courses", help="Choisissez-en autant que vous voulez — une soupe peut être une entrée et "
+                                        "un plat.")
+        st.pills("Repas", list(MEALS), format_func=MEALS.get, selection_mode="multi", key="ed_meals",
+                 help="Quand mangeriez-vous ce plat ? Choisissez-en autant que vous voulez.")
+        st.pills("Saison", list(SEASONS), format_func=SEASONS.get, selection_mode="multi", key="ed_seasons",
+                 help="Laissez vide si cette recette se fait toute l'année.")
     with c3:
-        st.segmented_control("Price", list(PRICES), format_func=PRICES.get, key="ed_price")
-        st.number_input("💶 Estimated cost in € (optional)", min_value=0.0, max_value=10000.0, step=0.5,
+        st.segmented_control("Prix", list(PRICES), format_func=PRICES.get, key="ed_price")
+        st.number_input("💶 Coût estimé en € (facultatif)", min_value=0.0, max_value=10000.0, step=0.5,
                         key="ed_cost", format="%.2f",
-                        help="Total cost for the number of people above. It is scaled like the ingredients.")
-        st.pills("Diet", list(DIETS), format_func=DIETS.get, key="ed_diet")
+                        help="Coût total pour le nombre de personnes ci-dessus. Il est adapté comme les "
+                             "ingrédients.")
+        st.pills("Régime", list(DIETS), format_func=DIETS.get, key="ed_diet")
 
 # ── Ingredients ─────────────────────────────────────────────────────────────
 with st.container(border=True):
-    st.subheader("🧂 Ingredients")
-    st.caption(f"Quantities for **{st.session_state.ed_servings}** "
-               f"{'person' if st.session_state.ed_servings == 1 else 'people'}. Click a cell to type, "
-               "use the **+** below the table to add a line, select a row and press the bin to remove it. "
-               "Leave the quantity empty for things like “salt, to taste”.")
+    st.subheader("🧂 Ingrédients")
+    st.caption(f"Quantités pour **{st.session_state.ed_servings}** "
+               f"personne{'s' if st.session_state.ed_servings != 1 else ''}. Cliquez sur une case pour écrire, "
+               "utilisez le **+** sous le tableau pour ajouter une ligne, sélectionnez une ligne et appuyez sur "
+               "la corbeille pour la retirer. Laissez la quantité vide pour « sel, selon le goût ».")
     units = list(dict.fromkeys([u for u in UNITS if u] + [u for u in st.session_state.ed_ingredients["unit"] if isinstance(u, str) and u]))
     ingredients = st.data_editor(
         st.session_state.ed_ingredients,
@@ -120,17 +122,18 @@ with st.container(border=True):
         width="stretch",
         column_order=["quantity", "unit", "name"],
         column_config={
-            "quantity": st.column_config.NumberColumn("Quantity", min_value=0, step=0.01, format="%g",
+            "quantity": st.column_config.NumberColumn("Quantité", min_value=0, step=0.01, format="%g",
                                                       width="small"),
-            "unit": st.column_config.SelectboxColumn("Unit", options=units, width="small",
-                                                     help="Leave empty for items counted as-is (2 eggs)."),
-            "name": st.column_config.TextColumn("Ingredient", width="large"),
+            "unit": st.column_config.SelectboxColumn("Unité", options=units, width="small",
+                                                     format_func=lambda u: UNITS.get(u, u),
+                                                     help="Laissez vide pour ce qui se compte tel quel (2 œufs)."),
+            "name": st.column_config.TextColumn("Ingrédient", width="large"),
         },
     )
-    with st.expander("✍️ Paste a list of ingredients instead"):
-        pasted = st.text_area("One ingredient per line, e.g. “200 g flour” or “2 eggs”", key="ed_paste",
+    with st.expander("✍️ Coller plutôt une liste d'ingrédients"):
+        pasted = st.text_area("Un ingrédient par ligne, ex. « 200 g de farine » ou « 2 œufs »", key="ed_paste",
                               height=150)
-        if st.button("Add these ingredients to the table", disabled=not pasted.strip()):
+        if st.button("Ajouter ces ingrédients au tableau", disabled=not pasted.strip()):
             parsed = [importer.parse_ingredient_line(line) for line in pasted.splitlines() if line.strip()]
             current = ingredients.dropna(subset=["name"])
             current = current[current["name"].astype(str).str.strip() != ""]
@@ -143,11 +146,12 @@ with st.container(border=True):
 
 # ── Instructions ────────────────────────────────────────────────────────────
 with st.container(border=True):
-    st.subheader("👩‍🍳 Instructions")
-    st.text_area("Write one step per line — they will be numbered automatically.", key="ed_steps", height=220,
-                 placeholder="Preheat the oven to 180 °C.\nMix the flour and the sugar.\nBake for 30 minutes.")
-    st.text_area("📝 Notes (optional)", key="ed_notes", height=90,
-                 placeholder="Tips, variations, wine pairing…")
+    st.subheader("👩‍🍳 Préparation")
+    st.text_area("Écrivez une étape par ligne — elles seront numérotées automatiquement.", key="ed_steps",
+                 height=220,
+                 placeholder="Préchauffer le four à 180 °C.\nMélanger la farine et le sucre.\nEnfourner 30 minutes.")
+    st.text_area("📝 Notes (facultatif)", key="ed_notes", height=90,
+                 placeholder="Astuces, variantes, accord mets-vin…")
 
 
 # ── Save ────────────────────────────────────────────────────────────────────
@@ -181,8 +185,8 @@ def collect() -> dict:
 
 
 with st.container(horizontal=True, horizontal_alignment="right", key="editor_actions"):
-    cancel = st.button("Cancel", icon="✖️")
-    save = st.button("Save recipe", icon="💾", type="primary")
+    cancel = st.button("Annuler", icon="✖️")
+    save = st.button("Enregistrer la recette", icon="💾", type="primary")
 
 if cancel:
     st.session_state.pop("editor_draft", None)
@@ -193,18 +197,18 @@ if cancel:
 if save:
     recipe = collect()
     if not recipe["title"]:
-        st.error("Please give your recipe a name (at the top of the page).", icon="✋")
+        st.error("Merci de donner un nom à votre recette (en haut de la page).", icon="✋")
         st.stop()
     if not st.session_state.ed_courses:
-        st.error("Please pick at least one part of the meal (starter, main course or dessert).", icon="✋")
+        st.error("Merci de choisir au moins une partie du repas (entrée, plat ou dessert).", icon="✋")
         st.stop()
     mine = storage.find_duplicate(recipe, storage.load_recipes()) if draft and is_new else None
     if mine:
-        st.error(f"You already have a recipe called **{mine['title']}**. Give this one another name, "
-                 "or cancel to keep your version.", icon="♻️")
+        st.error(f"Vous avez déjà une recette nommée **{mine['title']}**. Donnez un autre nom à celle-ci, "
+                 "ou annulez pour garder votre version.", icon="♻️")
         st.stop()
     if upload is None and not has_photo:
-        st.error("Please add a photo of the dish (at the top of the page).", icon="📷")
+        st.error("Merci d'ajouter une photo du plat (en haut de la page).", icon="📷")
         st.stop()
     image_data = original.get("image_data") if draft else None
     recipe.pop("image_data", None)
@@ -221,5 +225,5 @@ if save:
     storage.save_recipe(saved)
     st.session_state.pop("editor_draft", None)
     st.session_state.pop("ed_loaded", None)
-    ui.flash(f"“{saved['title']}” was saved")
+    ui.flash(f"« {saved['title']} » a été enregistrée")
     st.switch_page(ui.RECIPE, query_params={"id": saved["id"]})

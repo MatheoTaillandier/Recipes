@@ -265,12 +265,12 @@ def parse_recipe_file(filename: str, content: bytes) -> list[dict]:
             return _from_json(json.loads(text))
         except ValueError:
             if suffix == ".json":
-                raise ValueError("This JSON file is damaged or not valid JSON.") from None
+                raise ValueError("Ce fichier JSON est endommagé ou n'est pas un JSON valide.") from None
     if suffix in (".html", ".htm") or re.search(r"<html|<script", text[:5000], re.I):
         recipes = _from_html(text)
         if recipes:
             return recipes
-        raise ValueError("No recipe was found in this web page.")
+        raise ValueError("Aucune recette n'a été trouvée dans cette page web.")
     recipe = from_text(text)
     return [recipe] if recipe["title"] else []
 

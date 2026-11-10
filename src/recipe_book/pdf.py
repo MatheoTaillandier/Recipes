@@ -31,7 +31,7 @@ class _RecipePDF(FPDF):
         self.set_y(-12)
         self.set_font("Sans", size=8)
         self.set_text_color(*MUTED)
-        self.cell(0, 6, f"My Recipe Book · page {self.page_no()}", align="C")
+        self.cell(0, 6, f"Mon carnet de recettes · page {self.page_no()}", align="C")
 
 
 def build_pdf(recipe: dict, people: int, image: Path | None = None) -> bytes:
@@ -64,7 +64,7 @@ def build_pdf(recipe: dict, people: int, image: Path | None = None) -> bytes:
     # Works with one part of the meal ("course") or several ("courses").
     courses = recipe.get("courses") or [recipe.get("course") or "main"]
     tags = [COURSES[c] for c in courses] + [MEALS[m] for m in recipe["meals"]]
-    tags += [SEASONS[s] for s in recipe["seasons"]] or ["All year"]
+    tags += [SEASONS[s] for s in recipe["seasons"]] or ["Toute l'année"]
     if recipe["diet"]:
         tags.append(DIETS[recipe["diet"]])
     if recipe["price"]:
@@ -74,12 +74,12 @@ def build_pdf(recipe: dict, people: int, image: Path | None = None) -> bytes:
     pdf.multi_cell(width, 5, "  ·  ".join(_plain(t) for t in tags), new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
     # ── Key facts ───────────────────────────────────────────────────────────
-    facts = [("For", f"{people} {'person' if people == 1 else 'people'}"),
-             ("Preparation", format_minutes(recipe["prep_time"])),
-             ("Cooking", format_minutes(recipe["cook_time"])),
+    facts = [("Pour", f"{people} personne{'s' if people != 1 else ''}"),
+             ("Préparation", format_minutes(recipe["prep_time"])),
+             ("Cuisson", format_minutes(recipe["cook_time"])),
              ("Total", format_minutes(total_time(recipe)))]
     if recipe["cost"]:
-        facts.append(("Cost", "≈ " + format_cost(recipe["cost"] * factor)))
+        facts.append(("Coût", "≈ " + format_cost(recipe["cost"] * factor)))
     pdf.ln(3)
     box_w = width / len(facts)
     top = pdf.get_y()
@@ -99,7 +99,7 @@ def build_pdf(recipe: dict, people: int, image: Path | None = None) -> bytes:
     if people != recipe["servings"]:
         pdf.set_font("Sans", size=8)
         pdf.set_text_color(*MUTED)
-        pdf.cell(width, 6, f"Amounts adjusted from the original recipe for {recipe['servings']}.",
+        pdf.cell(width, 6, f"Quantités adaptées de la recette d'origine pour {recipe['servings']}.",
                  new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
     def heading(text: str) -> None:
@@ -112,16 +112,16 @@ def build_pdf(recipe: dict, people: int, image: Path | None = None) -> bytes:
         pdf.ln(3)
 
     # ── Ingredients & steps ─────────────────────────────────────────────────
-    heading("Ingredients")
+    heading("Ingrédients")
     pdf.set_font("Sans", size=11)
     pdf.set_text_color(*TEXT)
     for ingredient in recipe["ingredients"]:
         pdf.multi_cell(width, 6.5, "▢  " + _plain(format_ingredient(ingredient, factor)),
                        new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     if not recipe["ingredients"]:
-        pdf.cell(width, 6, "No ingredients listed.", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        pdf.cell(width, 6, "Aucun ingrédient indiqué.", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
-    heading("Instructions")
+    heading("Préparation")
     for n, step in enumerate(recipe["steps"], 1):
         pdf.set_font("Sans", "B", 11)
         pdf.set_text_color(*ACCENT)
@@ -132,7 +132,7 @@ def build_pdf(recipe: dict, people: int, image: Path | None = None) -> bytes:
         pdf.ln(1.5)
     if not recipe["steps"]:
         pdf.set_font("Sans", size=11)
-        pdf.cell(width, 6, "No instructions yet.", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        pdf.cell(width, 6, "Pas encore d'étapes.", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
     if recipe["notes"]:
         heading("Notes")

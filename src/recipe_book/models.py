@@ -8,16 +8,19 @@ import unicodedata
 from datetime import datetime
 
 # ── Choices offered in the UI ───────────────────────────────────────────────
-SEASONS = {"spring": "🌸 Spring", "summer": "☀️ Summer", "autumn": "🍂 Autumn", "winter": "❄️ Winter"}
-MEALS = {"breakfast": "🥐 Breakfast", "lunch": "🥗 Lunch", "dinner": "🌙 Dinner", "snack": "🍪 Snack"}
-COURSES = {"starter": "🥣 Starter", "main": "🍲 Main course", "dessert": "🍰 Dessert"}
-DIETS = {"vegan": "🥦 Vegan", "vegetarian": "🥕 Vegetarian", "pescatarian": "🐟 Pescatarian", "meat": "🍗 Meat"}
-PRICES = {1: "€ Cheap", 2: "€€ Moderate", 3: "€€€ Expensive"}
+SEASONS = {"spring": "🌸 Printemps", "summer": "☀️ Été", "autumn": "🍂 Automne", "winter": "❄️ Hiver"}
+MEALS = {"breakfast": "🥐 Petit-déjeuner", "lunch": "🥗 Déjeuner", "dinner": "🌙 Dîner", "snack": "🍪 Goûter"}
+COURSES = {"starter": "🥣 Entrée", "main": "🍲 Plat", "dessert": "🍰 Dessert"}
+DIETS = {"vegan": "🥦 Végan", "vegetarian": "🥕 Végétarien", "pescatarian": "🐟 Pescétarien", "meat": "🍗 Viande"}
+PRICES = {1: "€ Bon marché", 2: "€€ Moyen", 3: "€€€ Cher"}
 
-UNITS = [
-    "", "g", "kg", "ml", "cl", "dl", "l", "tsp", "tbsp", "cup", "pinch",
-    "piece", "clove", "slice", "can", "bunch", "handful", "oz", "lb",
-]
+# Saved recipes keep the (English) keys; the values are what the user sees.
+UNITS = {
+    "": "", "g": "g", "kg": "kg", "ml": "ml", "cl": "cl", "dl": "dl", "l": "l",
+    "tsp": "c. à c.", "tbsp": "c. à s.", "cup": "tasse", "pinch": "pincée", "piece": "pièce",
+    "clove": "gousse", "slice": "tranche", "can": "boîte", "bunch": "botte", "handful": "poignée",
+    "oz": "oz", "lb": "lb",
+}
 
 # Units whose amounts read better as kitchen fractions (½, ¼…) than decimals.
 _FRACTION_UNITS = {"", "tsp", "tbsp", "cup", "pinch", "piece", "clove", "slice", "can",
@@ -159,7 +162,7 @@ def format_quantity(quantity: float | None, unit: str = "") -> str:
         whole = math.floor(quantity)
         rest = quantity - whole
         if rest < 0.05:
-            return str(whole) if whole else "a little"
+            return str(whole) if whole else "un peu"
         if rest > 0.95:
             return str(whole + 1)
         for value, symbol in _FRACTIONS:
@@ -169,7 +172,7 @@ def format_quantity(quantity: float | None, unit: str = "") -> str:
         return str(int(round(quantity / 5) * 5))
     if quantity >= 10:
         return str(int(round(quantity)))
-    return f"{quantity:.2f}".rstrip("0").rstrip(".")
+    return f"{quantity:.2f}".rstrip("0").rstrip(".").replace(".", ",")
 
 
 def format_ingredient(ingredient: dict, factor: float = 1.0) -> str:
@@ -181,7 +184,10 @@ def format_ingredient(ingredient: dict, factor: float = 1.0) -> str:
     if unit in ("g", "ml") and quantity >= 1000:
         quantity, unit = quantity / 1000, {"g": "kg", "ml": "l"}[unit]
     amount = format_quantity(quantity, unit)
-    return " ".join(part for part in (amount, unit, ingredient["name"]) if part)
+    label = UNITS.get(unit, unit)
+    if quantity >= 2 and label.isalpha() and len(label) > 2:
+        label += "s"  # word units take a plural in French (2 gousses); symbols (g, kg, c. à s.) don't
+    return " ".join(part for part in (amount, label, ingredient["name"]) if part)
 
 
 def format_minutes(minutes: int) -> str:
@@ -198,4 +204,4 @@ def total_time(recipe: dict) -> int:
 
 
 def format_cost(cost: float) -> str:
-    return f"{cost:.2f} €".replace(".00 €", " €")
+    return f"{cost:.2f} €".replace(".00 €", " €").replace(".", ",")
