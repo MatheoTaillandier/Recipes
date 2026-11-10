@@ -1,6 +1,6 @@
 {
-  "title": "Honey-roasted carrots",
-  "description": "Tender carrots glazed with honey and thyme — a cosy winter main for vegetarian evenings.",
+  "title": "Carottes rôties au miel",
+  "description": "Des carottes fondantes glacées au miel et au thym — un plat d'hiver réconfortant pour les soirées végétariennes.",
   "image": "carot-recipe.jpg",
   "servings": 4,
   "seasons": ["autumn", "winter"],
@@ -13,19 +13,19 @@
   "cost": 5,
   "rating": 5,
   "ingredients": [
-    {"quantity": 800, "unit": "g", "name": "carrots"},
-    {"quantity": 2, "unit": "tbsp", "name": "olive oil"},
-    {"quantity": 2, "unit": "tbsp", "name": "honey"},
-    {"quantity": 3, "unit": "clove", "name": "garlic"},
-    {"quantity": 4, "unit": "", "name": "sprigs of thyme"},
-    {"quantity": 1, "unit": "tsp", "name": "salt"},
-    {"quantity": null, "unit": "", "name": "Pepper, to taste"}
+    {"quantity": 800, "unit": "g", "name": "carottes"},
+    {"quantity": 2, "unit": "tbsp", "name": "huile d'olive"},
+    {"quantity": 2, "unit": "tbsp", "name": "miel"},
+    {"quantity": 3, "unit": "clove", "name": "ail"},
+    {"quantity": 4, "unit": "", "name": "brins de thym"},
+    {"quantity": 1, "unit": "tsp", "name": "sel"},
+    {"quantity": null, "unit": "", "name": "Poivre, selon le goût"}
   ],
   "steps": [
-    "Preheat the oven to 200 °C (400 °F).",
-    "Peel the carrots and cut the large ones in half lengthwise.",
-    "Toss them with the olive oil, honey, crushed garlic, thyme, salt and pepper.",
-    "Spread on a baking tray and roast for 30–35 minutes, turning halfway, until golden and tender."
+    "Préchauffer le four à 200 °C (thermostat 6-7).",
+    "Éplucher les carottes et couper les plus grosses en deux dans la longueur.",
+    "Les mélanger avec l'huile d'olive, le miel, l'ail écrasé, le thym, le sel et le poivre.",
+    "Les étaler sur une plaque et enfourner 30 à 35 minutes, en les retournant à mi-cuisson, jusqu'à ce qu'elles soient dorées et tendres."
   ],
   "notes": ""
 }

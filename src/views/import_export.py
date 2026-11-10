@@ -3,26 +3,28 @@ import streamlit as st
 from recipe_book import importer, storage, ui
 from recipe_book.models import COURSES
 
-st.title("📥 Import & export")
+st.title("📥 Importer et exporter")
 
 # ── Import ──────────────────────────────────────────────────────────────────
 with st.container(border=True):
-    st.subheader("Import a recipe from a file")
+    st.subheader("Importer une recette depuis un fichier")
     st.markdown(
-        "Supported files:\n"
-        "- **Recipe files from this app** (`.json`) — e.g. a recipe a friend sent you, or a backup\n"
-        "- **Web pages** (`.html`) — open a recipe on a cooking website, use *File › Save page as…*, "
-        "then import the saved file\n"
-        "- **Text files** (`.txt`, `.md`) — the first line is the name, followed by an *Ingredients* section "
-        "and an *Instructions* section"
+        "Fichiers acceptés :\n"
+        "- **Fichiers de recette de cette application** (`.json`) — ex. une recette envoyée par un ami, "
+        "ou une sauvegarde\n"
+        "- **Pages web** (`.html`) — ouvrez une recette sur un site de cuisine, utilisez "
+        "*Fichier › Enregistrer la page sous…*, puis importez le fichier enregistré\n"
+        "- **Fichiers texte** (`.txt`, `.md`) — la première ligne est le nom, suivie d'une partie "
+        "*Ingrédients* et d'une partie *Préparation*"
     )
-    with st.expander("See an example of a text file"):
-        st.code("Pancakes\nFluffy pancakes for a lazy Sunday.\nServes: 4\nPrep time: 10 min\n"
-                "Cook time: 20 min\n\nIngredients\n- 250 g flour\n- 2 eggs\n- 500 ml milk\n- 1 pinch salt\n\n"
-                "Instructions\n1. Mix the flour and the eggs.\n2. Slowly whisk in the milk.\n"
-                "3. Cook ladlefuls in a hot buttered pan, 1 minute per side.", language=None)
+    with st.expander("Voir un exemple de fichier texte"):
+        st.code("Crêpes\nDes crêpes moelleuses pour un dimanche tranquille.\nPour : 4\n"
+                "Temps de préparation : 10 min\nTemps de cuisson : 20 min\n\nIngrédients\n- 250 g de farine\n"
+                "- 2 œufs\n- 50 cl de lait\n- 1 pincée de sel\n\nPréparation\n1. Mélanger la farine et les œufs.\n"
+                "2. Verser le lait petit à petit en fouettant.\n"
+                "3. Cuire à la louche dans une poêle chaude et beurrée, 1 minute par face.", language=None)
 
-    upload = st.file_uploader("Choose a recipe file", type=["json", "html", "htm", "txt", "md"],
+    upload = st.file_uploader("Choisir un fichier de recette", type=["json", "html", "htm", "txt", "md"],
                               key="import_file")
     if upload is not None:
         try:
@@ -32,8 +34,8 @@ with st.container(border=True):
             st.error(str(error), icon="⚠️")
         else:
             if not found:
-                st.error("No recipe could be found in this file. Check that it is one of the supported "
-                         "formats above.", icon="⚠️")
+                st.error("Aucune recette n'a été trouvée dans ce fichier. Vérifiez qu'il est dans l'un des "
+                         "formats acceptés ci-dessus.", icon="⚠️")
 
         # The same recipe listed twice in one file is only imported once.
         unique = {}
@@ -47,50 +49,52 @@ with st.container(border=True):
         if len(found) == 1:
             recipe = found[0]
             mine = duplicates.get(storage.duplicate_key(recipe))
-            st.success(f"Found **{recipe['title']}** · {len(recipe['ingredients'])} ingredients · "
-                       f"{len(recipe['steps'])} steps", icon="✅")
+            st.success(f"Trouvé : **{recipe['title']}** · {len(recipe['ingredients'])} ingrédients · "
+                       f"{len(recipe['steps'])} étapes", icon="✅")
             if mine:
-                st.warning(f"You already have a recipe called **{mine['title']}**, so it won't be added "
-                           "a second time.", icon="♻️")
+                st.warning(f"Vous avez déjà une recette nommée **{mine['title']}**, elle ne sera donc pas "
+                           "ajoutée une deuxième fois.", icon="♻️")
                 with st.container(horizontal=True):
-                    st.page_link(ui.RECIPE, label="Open my version", icon="👀", query_params={"id": mine["id"]})
-                    if st.button("Replace mine with this one", icon="🔁"):
+                    st.page_link(ui.RECIPE, label="Ouvrir ma version", icon="👀", query_params={"id": mine["id"]})
+                    if st.button("Remplacer la mienne par celle-ci", icon="🔁"):
                         saved = storage.save_imported(recipe, replace=mine)
-                        ui.flash(f"“{saved['title']}” was updated from the file", "🔁")
+                        ui.flash(f"« {saved['title']} » a été mise à jour depuis le fichier", "🔁")
                         st.switch_page(ui.RECIPE, query_params={"id": saved["id"]})
-            elif st.button("Review and save this recipe", icon="👉", type="primary"):
+            elif st.button("Vérifier et enregistrer cette recette", icon="👉", type="primary"):
                 st.session_state.editor_draft = recipe
                 st.session_state.pop("ed_loaded", None)
                 st.switch_page(ui.EDITOR)
         elif len(found) > 1:
-            st.success(f"Found **{len(found)} recipes** in this file.", icon="✅")
+            st.success(f"**{len(found)} recettes** trouvées dans ce fichier.", icon="✅")
             for recipe in found:
-                status = " · *already in your book*" if storage.duplicate_key(recipe) in duplicates else " · 🆕 new"
+                status = (" · *déjà dans votre carnet*" if storage.duplicate_key(recipe) in duplicates
+                          else " · 🆕 nouvelle")
                 st.markdown(f"- **{recipe['title']}** — {', '.join(COURSES[c] for c in recipe['courses'])}{status}")
             replace = False
             if duplicates:
                 choice = st.radio(
-                    f"{len(duplicates)} of these recipes are already in your book. What should happen to them?",
-                    ["Skip them (keep my versions)", "Replace my versions with the ones from the file"],
+                    f"{len(duplicates)} de ces recettes sont déjà dans votre carnet. Que faut-il en faire ?",
+                    ["Les ignorer (garder mes versions)", "Remplacer mes versions par celles du fichier"],
                     key="import_duplicates")
-                replace = choice.startswith("Replace")
+                replace = choice.startswith("Remplacer")
             to_import = [r for r in found if replace or storage.duplicate_key(r) not in duplicates]
             if not to_import:
-                st.info("All these recipes are already in your book — there is nothing new to import.", icon="👍")
-            elif st.button(f"Import {len(to_import)} recipe{'s' if len(to_import) != 1 else ''}", icon="📥",
+                st.info("Toutes ces recettes sont déjà dans votre carnet — il n'y a rien de nouveau à importer.",
+                        icon="👍")
+            elif st.button(f"Importer {len(to_import)} recette{'s' if len(to_import) != 1 else ''}", icon="📥",
                            type="primary"):
                 for recipe in to_import:
                     storage.save_imported(recipe, replace=duplicates.get(storage.duplicate_key(recipe)))
-                ui.flash(f"{len(to_import)} recipe{'s were' if len(to_import) != 1 else ' was'} imported", "📥")
+                ui.flash(f"{len(to_import)} recette{'s importées' if len(to_import) != 1 else ' importée'}", "📥")
                 st.switch_page(ui.HOME)
 
 # ── Export ──────────────────────────────────────────────────────────────────
 with st.container(border=True):
-    st.subheader("Back up all my recipes")
+    st.subheader("Sauvegarder toutes mes recettes")
     recipes = storage.load_recipes()
-    st.write(f"Download your **{len(recipes)} recipes** (with their photos) in a single file. "
-             "Keep it somewhere safe, or import it on another computer.")
-    st.download_button("Download backup", data=importer.export_recipes(recipes, storage.image_path),
-                       file_name="my-recipe-book-backup.json", mime="application/json", icon="💾",
+    st.write(f"Téléchargez vos **{len(recipes)} recettes** (avec leurs photos) dans un seul fichier. "
+             "Gardez-le en lieu sûr, ou importez-le sur un autre ordinateur.")
+    st.download_button("Télécharger la sauvegarde", data=importer.export_recipes(recipes, storage.image_path),
+                       file_name="sauvegarde-carnet-de-recettes.json", mime="application/json", icon="💾",
                        on_click="ignore", disabled=not recipes, type="primary")
-    st.caption(f"Your recipes are stored on this computer, in the folder `{storage.DATA_DIR}`.")
+    st.caption(f"Vos recettes sont enregistrées sur cet ordinateur, dans le dossier `{storage.DATA_DIR}`.")

@@ -63,7 +63,7 @@ def set_people(value: int) -> None:
         storage.save_settings(settings)
 
 
-def people_input(key: str, label: str = "👥 People eating") -> int:
+def people_input(key: str, label: str = "👥 Nombre de convives") -> int:
     """Number input bound to the shared 'people eating' value."""
     st.session_state[key] = st.session_state.people
 
@@ -71,7 +71,7 @@ def people_input(key: str, label: str = "👥 People eating") -> int:
         set_people(st.session_state[key])
 
     return int(st.number_input(label, min_value=1, max_value=100, step=1, key=key, on_change=on_change,
-                               help="Ingredient amounts and cost are recalculated for this number of people."))
+                               help="Les quantités et le coût sont recalculés pour ce nombre de personnes."))
 
 
 def flash(message: str, icon: str = "✅") -> None:
@@ -92,14 +92,14 @@ def header() -> None:
     st.markdown(CSS, unsafe_allow_html=True)
     left, right = st.columns([1, 1], vertical_alignment="center")
     with left:
-        st.markdown('<div class="rb-brand">🍽️ My Recipe Book</div>'
-                    '<div class="rb-tagline">Your family recipes, kept safely on this computer</div>',
+        st.markdown('<div class="rb-brand">🍽️ Mon carnet de recettes</div>'
+                    '<div class="rb-tagline">Vos recettes de famille, gardées en sécurité sur cet ordinateur</div>',
                     unsafe_allow_html=True)
     with right, st.container(horizontal=True, horizontal_alignment="right", vertical_alignment="center",
                                      key="rb_nav"):
-        st.page_link(HOME, label="All recipes", icon="📖")
-        st.page_link(IMPORT, label="Import / Export", icon="📥")
-        if st.button("Add a recipe", icon="➕", type="primary", key="nav_add"):
+        st.page_link(HOME, label="Toutes les recettes", icon="📖")
+        st.page_link(IMPORT, label="Importer / Exporter", icon="📥")
+        if st.button("Ajouter une recette", icon="➕", type="primary", key="nav_add"):
             st.session_state.pop("editor_draft", None)
             st.session_state.pop("ed_loaded", None)
             st.switch_page(EDITOR)

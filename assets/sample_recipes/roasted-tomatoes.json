@@ -1,6 +1,6 @@
 {
-  "title": "Roasted garlic tomatoes",
-  "description": "Sweet, jammy tomatoes roasted with garlic and olive oil. Perfect on toast or with pasta.",
+  "title": "Tomates rôties à l'ail",
+  "description": "Des tomates sucrées et confites, rôties avec de l'ail et de l'huile d'olive. Parfaites sur une tartine ou avec des pâtes.",
   "image": "tomato-recipe.jpg",
   "servings": 4,
   "seasons": ["summer"],
@@ -13,19 +13,19 @@
   "cost": 6,
   "rating": 4,
   "ingredients": [
-    {"quantity": 8, "unit": "", "name": "ripe tomatoes"},
-    {"quantity": 2, "unit": "tbsp", "name": "olive oil"},
-    {"quantity": 2, "unit": "clove", "name": "garlic, minced"},
-    {"quantity": 1, "unit": "tsp", "name": "salt"},
-    {"quantity": 0.5, "unit": "tsp", "name": "black pepper"},
-    {"quantity": 1, "unit": "handful", "name": "fresh basil"}
+    {"quantity": 8, "unit": "", "name": "tomates bien mûres"},
+    {"quantity": 2, "unit": "tbsp", "name": "huile d'olive"},
+    {"quantity": 2, "unit": "clove", "name": "ail, haché"},
+    {"quantity": 1, "unit": "tsp", "name": "sel"},
+    {"quantity": 0.5, "unit": "tsp", "name": "poivre noir"},
+    {"quantity": 1, "unit": "handful", "name": "basilic frais"}
   ],
   "steps": [
-    "Preheat the oven to 200 °C (400 °F).",
-    "Cut the tomatoes in half and place them cut side up on a baking sheet.",
-    "Drizzle with olive oil, then sprinkle with the garlic, salt and pepper.",
-    "Roast for 20–25 minutes, until soft and slightly caramelised.",
-    "Scatter the torn basil leaves on top and serve warm."
+    "Préchauffer le four à 200 °C (thermostat 6-7).",
+    "Couper les tomates en deux et les poser sur une plaque, face coupée vers le haut.",
+    "Arroser d'huile d'olive, puis parsemer d'ail, de sel et de poivre.",
+    "Enfourner 20 à 25 minutes, jusqu'à ce qu'elles soient fondantes et légèrement caramélisées.",
+    "Parsemer de feuilles de basilic déchirées et servir tiède."
   ],
-  "notes": "Leftovers keep 3 days in the fridge — blend them into a quick pasta sauce."
+  "notes": "Les restes se gardent 3 jours au réfrigérateur — mixez-les pour une sauce tomate express."
 }
